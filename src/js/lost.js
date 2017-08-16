@@ -1,16 +1,25 @@
 var sub = new v2d(0,0) 
+var speed = new v2d(3,2)
+var accInput = new v2d(0,0)
 var light = 100
 var bubbles = []
 for(var i = 0; i < 10; i ++) {
     bubbles.push({pos : new v2d(0,0), size : 10*i % 70})
 }
 
+var acc = new v2d(0,0)
 function step(delta) {
     //mv
-    var o = new v2d(0,0)
-    o.setVector(m).sub(sub).normalize()
-    sub.add(o)
+    accInput = acc.setVector(m).sub(sub)
+    if(accInput.norm() < 50) {
+        acc.setVector(accInput.invert().scale(0.3))
+    } else {
+        acc.setVector(accInput).normalize()
+    }
     
+    speed.add(acc.scale(0.3))
+    sub.add(speed.maxLength(10))
+    subinfo.innerHTML = `${acc.toString()} <br> ${speed.toString()}`
     //bubbles
     liveBubble()
     
@@ -42,6 +51,12 @@ function step(delta) {
     ctx.fillStyle = "#DD0044"
     ctx.fillRect(m.x,m.y,3,3)
     
+    ctx.beginPath()
+    ctx.strokeStyle = "#fff"
+    ctx.arc(sub.x,sub.y, 50, 0, Math.PI*2)
+    ctx.closePath()
+    ctx.stroke()
+    
     lightd.innerHTML = light
 }
 
@@ -54,10 +69,12 @@ function toggleL() {
 function drawBubble() {
     ctx.fillStyle = "#ffffff"
     for(var i = 0;i < bubbles.length; i ++) {
-        if(bubbles[i].size > 0) 
+        if(bubbles[i].size > 0)  {
             ctx.beginPath()
             ctx.arc(bubbles[i].pos.x, bubbles[i].pos.y, bubbles[i].size/10, 0, Math.PI*2)
+            ctx.closePath()
             ctx.fill()
+        }
     }
 }
 function liveBubble() {
