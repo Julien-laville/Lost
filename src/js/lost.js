@@ -41,9 +41,7 @@ function step(delta) {
     ctx.fillRect(sub.x-100,sub.y-100,200,200)
 */
     
-    //obstacles
-    ctx.fillStyle = "#444444"
-    ctx.fillRect(400,100,40,40)
+
     
     drawSprite(sub, 'SUB', acc.x > 0)
     
@@ -114,13 +112,13 @@ function drawSprite(p, img, rev) {
 var tile = 0
 var i,j;
 function drawLevel() {
-    
-    for(i = 0; i < 32; i++) {
-        for(j = 0; j < 32;j++) {
-            tile = TileMaps.level2.layers[0].data[i+j]
-            if(tile===20) {
-                ctx.drawImage(sprite, 64, 32, 16, 16, 16*i, 16*j, 32, 32)
-            }
+        j = 0
+    for(i = 0; i < 32*32; i++) {
+        tile = TileMaps.level2.layers[0].data[i]
+        if(i % 32 === 0) j++
+        if(tile===20) {
+            ctx.drawImage(sprite, 48, 16, 16, 16, 32*(i%32), 32*j, 32, 32)
+
         }
     }
     
