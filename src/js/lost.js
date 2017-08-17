@@ -12,20 +12,24 @@ function step(delta) {
     //mv
     accInput = acc.setVector(m).sub(sub)
     if(accInput.norm() < 50) {
-        acc.setVector(accInput.invert().scale(0.3))
+        speed.scale(0.9)
+        if(speed.norm() < 1) {
+            speed.setPoint(0,0)
+        }
     } else {
         acc.setVector(accInput).normalize()
+        speed.add(acc.scale(0.3))
     }
     
-    speed.add(acc.scale(0.3))
-    sub.add(speed.maxLength(10))
-    subinfo.innerHTML = `${acc.toString()} <br> ${speed.toString()}`
+    
+    sub.add(speed.maxLength(MAX_SPEED))
     //bubbles
-    liveBubble()
+    liveBubble(acc.x > 0)
     
     //back  
     ctx.fillStyle = "#111200"
     ctx.fillRect(0,0,10000,100000)
+    drawLevel()
     
     /*ctx.save()
     ctx.globalCompositeOperation = "multiply";
@@ -41,7 +45,7 @@ function step(delta) {
     ctx.fillStyle = "#444444"
     ctx.fillRect(400,100,40,40)
     
-    drawSprite(sub, 'SUB')
+    drawSprite(sub, 'SUB', acc.x > 0)
     
     drawBubble()
     
@@ -77,22 +81,47 @@ function drawBubble() {
         }
     }
 }
-function liveBubble() {
+function liveBubble(rev) {
     for(var i = 0; i < bubbles.length; i ++) {
-        if(bubbles[i].size === 0) {
+        if(bubbles[i].size < 0) {
             bubbles[i].size = 70
-            bubbles[i].pos = sub.clone().add(new v2d(Math.random()*5+64, Math.random()*5+16))
+            bubbles[i].pos = sub.clone().add(new v2d(Math.random()*5+(rev ? -32 : 32), Math.random()*5))
         } else{
-            bubbles[i].pos.add(new v2d(0, -1))
+            bubbles[i].pos.add(new v2d(0, -1.5))
             bubbles[i].size-- 
         }
     }
 }
 
 
-function drawSprite(p, img) {
+function drawSprite(p, img, rev) {
     //ctx["mozImageSmoothingEnabled"] = false;
     ctx["imageSmoothingEnabled"] = false;
-    if(img === 'SUB')
-        ctx.drawImage(sprite, 0, 0, 32, 24, p.x, p.y, 64, 48)
+
+    
+    if(rev === true) {
+        ctx.save()
+        ctx.translate(sub.x, sub.y)
+        ctx.scale(-1, 1);        
+        ctx.translate(-sub.x, -sub.y)
+    }
+    ctx.drawImage(sprite, 0, 0, 32, 16, p.x-32, p.y-16, 64, 32)
+    if(rev === true) {
+        ctx.restore()
+    }
+}
+
+var tile = 0
+var i,j;
+function drawLevel() {
+    
+    for(i = 0; i < 32; i++) {
+        for(j = 0; j < 32;j++) {
+            tile = TileMaps.level2.layers[0].data[i+j]
+            if(tile===20) {
+                ctx.drawImage(sprite, 64, 32, 16, 16, 16*i, 16*j, 32, 32)
+            }
+        }
+    }
+    
 }

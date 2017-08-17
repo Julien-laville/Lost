@@ -1,9 +1,24 @@
 <!DOCTYPE html>
+<style>
+    * {
+        margin: 0;padding: 0
+    }
+    #info, #subinfo, #pauseScreen {
+        position: absolute;
+        top:0;
+        color: aliceblue;
+        font-family: monospace;
+    }
+    #pauseScreen {
+        display: none
+    }
+</style>
+<canvas id="screen"></canvas>
 <div id="info"></div>
 <div id="subinfo"></div>
 <div id="pauseScreen">PAUSE</div>
-<canvas id="screen"></canvas>
 
+<script src="level/level2.js"></script>
 <script src="src/js/v2d.js"></script>
 <script src="src/js/lost.js"></script>
 <script src="src/js/game.js"></script>
