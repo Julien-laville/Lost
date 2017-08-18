@@ -3,7 +3,8 @@ var speed = new v2d(3,2)
 var accInput = new v2d(0,0)
 var light = 100
 var bubbles = []
-for(var i = 0; i < 10; i ++) {
+var i,j;
+for(i = 0; i < 10; i ++) {
     bubbles.push({pos : new v2d(0,0), size : 10*i % 70})
 }
 
@@ -20,6 +21,8 @@ function step(delta) {
         acc.setVector(accInput).normalize()
         speed.add(acc.scale(0.3))
     }
+    
+    colide()
     
     
     sub.add(speed.maxLength(MAX_SPEED))
@@ -110,7 +113,20 @@ function drawSprite(p, img, rev) {
 }
 
 var tile = 0
-var i,j;
+
+
+function colide() {
+    j = 0
+    for(i = 0; i < 32*32; i++) {
+        if(i % 32 === 0) j++
+        tile = TileMaps.level2.layers[0].data[i]
+        if(tile != 0) {
+            if(sub.x > (i%32)*32 && sub.x < (i%32)*32 + 64 && sub.y > 32*j && sub.y < 32*j+32) {
+                speed.x = -speed.x/2
+            }
+        } 
+    }
+}
 function drawLevel() {
         j = 0
     for(i = 0; i < 32*32; i++) {
