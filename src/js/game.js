@@ -4,9 +4,7 @@ screen.height = window.innerHeight
 var frameHandler = null
 GAME_STATE_PAUSE = 0
 GAME_STATE_RUN = 1
-
-
-MAX_SPEED = 7
+GAME_STATE_LEVEL = 2
 
 ctx = screen.getContext("2d")
 var m = new v2d(1,1)
@@ -37,7 +35,7 @@ function loop() {
 	time = performance.now()
 }
 
-gameState = GAME_STATE_RUN
+gameState = GAME_STATE_LEVEL
 
 
 window.onkeypress =function(e) {
@@ -53,7 +51,11 @@ window.onkeypress =function(e) {
 			gameState = GAME_STATE_RUN
 			pauseScreen.style.display = 'none'
 		}
-	}
+	} else if(e.keyCode === 97) {
+        SPEED = 0
+    } else if(e.keyCode === 122) {
+        SPEED = 1
+    }
 }
 
 window.onmousemove = function(e) {

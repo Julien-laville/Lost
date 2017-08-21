@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="left-up" width="32" height="32" tilewidth="16" tileheight="16" nextobjectid="1">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-up" width="32" height="32" tilewidth="16" tileheight="16" nextobjectid="1">
  <tileset firstgid="1" name="sprite" tilewidth="16" tileheight="16" tilecount="256" columns="16">
   <image source="../sprite.gif" width="256" height="256"/>
  </tileset>
@@ -7,7 +7,7 @@
   <data encoding="csv">
 20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,0,0,0,0,0,0,0,0,
 20,20,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,20,20,20,20,20,20,20,0,0,0,
-20,21,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,19,36,36,36,36,36,20,20,0,0,
+20,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,19,36,36,36,36,36,20,20,0,0,
 20,21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,19,20,0,0,
 20,20,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,19,20,0,0,
 20,20,20,20,20,20,20,20,20,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,19,20,0,0,

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <style>
     * {
-        margin: 0;padding: 0
+        margin: 0;padding: 0;
+        font-family: monospace
     }
     #info, #subinfo, #pauseScreen {
         position: absolute;
@@ -12,18 +13,23 @@
     #pauseScreen {
         display: none
     }
+    #ui, #screen {
+
+    }
 </style>
 <canvas id="screen"></canvas>
+<div id=ui></div>
+<div id="levels">
+    <button onclick="initLevel('level1')">Level 1</button>
+    <button onclick="initLevel('level2')">Level 2</button>
+</div>
 <div id="info"></div>
-<div id="subinfo"></div>
 <div id="pauseScreen">PAUSE</div>
 
+<script src="level/level1.js"></script>
 <script src="level/level2.js"></script>
 <script src="src/js/v2d.js"></script>
 <script src="src/js/lost.js"></script>
 <script src="src/js/game.js"></script>
 
-<div id=ui>
-    <p id=lightd onclick=toggleL()></p>
-</div>
-<img src="sprite.gif" id="sprite" onload="loop()">
+<img src="sprite.gif" id="sprite">

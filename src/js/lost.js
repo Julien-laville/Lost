@@ -1,9 +1,13 @@
 var sub = new v2d(0,0) 
 var speed = new v2d(3,2)
+var SPEED = 0
 var accInput = new v2d(0,0)
-var light = 100
+SUB_LENGTH= 32
+SUB_HEIHGT = 16
+LEVEL_WIDTH = 0
 var bubbles = []
 var i,j;
+var level= {};
 for(i = 0; i < 10; i ++) {
     bubbles.push({pos : new v2d(0,0), size : 10*i % 70})
 }
@@ -22,10 +26,10 @@ function step(delta) {
         speed.add(acc.scale(0.3))
     }
     
-    colide()
     
     
-    sub.add(speed.maxLength(MAX_SPEED))
+    
+    sub.add(speed.maxLength(SPEED==0?2:7))
     //bubbles
     liveBubble(acc.x > 0)
     
@@ -47,38 +51,38 @@ function step(delta) {
 
     
     drawSprite(sub, 'SUB', acc.x > 0)
-    
+    colide()
     drawBubble()
     
     
     
     //ui
-    ctx.fillStyle = "#DD0044"
-    ctx.fillRect(m.x,m.y,3,3)
     
+    drawUI() 
+    
+    
+}
+
+
+function drawUI() {
+
     ctx.beginPath()
     ctx.strokeStyle = "#fff"
     ctx.arc(sub.x,sub.y, 50, 0, Math.PI*2)
     ctx.closePath()
     ctx.stroke()
-    
-    lightd.innerHTML = light
-}
-
-
-function toggleL() {
-    light = light === 100 ? 0 : 100 
+    ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>`
 }
 
 
 function drawBubble() {
-    ctx.fillStyle = "#ffffff"
+    ctx.strokeStyle = "#ffffff"
     for(var i = 0;i < bubbles.length; i ++) {
         if(bubbles[i].size > 0)  {
             ctx.beginPath()
             ctx.arc(bubbles[i].pos.x, bubbles[i].pos.y, bubbles[i].size/10, 0, Math.PI*2)
             ctx.closePath()
-            ctx.fill()
+            ctx.stroke()
         }
     }
 }
@@ -88,7 +92,7 @@ function liveBubble(rev) {
             bubbles[i].size = 70
             bubbles[i].pos = sub.clone().add(new v2d(Math.random()*5+(rev ? -32 : 32), Math.random()*5))
         } else{
-            bubbles[i].pos.add(new v2d(0, -1.5))
+            bubbles[i].pos.add(new v2d(Math.cos(time+bubbles[i].pos.y), -1.5))
             bubbles[i].size-- 
         }
     }
@@ -113,29 +117,59 @@ function drawSprite(p, img, rev) {
 }
 
 var tile = 0
-
+var tp = new v2d(0,0)
+//<3
+var tItleColide = 0
 
 function colide() {
     j = 0
-    for(i = 0; i < 32*32; i++) {
-        if(i % 32 === 0) j++
-        tile = TileMaps.level2.layers[0].data[i]
+    for(i = 0; i < 100*100; i++) {
+        if(i % 100 === 0) j++
+        tile = level.tiles[i]
+        
+        tItleColide = sub.x*32
+        
+        tp.setPoint(32*(i%100), 32*j)
+        ctx.fillStyle="#00ffff"
+        ctx.fillRect(sub.x+SUB_LENGTH,sub.y+SUB_HEIHGT,3,3)
+        ctx.fillRect(sub.x+SUB_LENGTH,sub.y-SUB_HEIHGT,3,3)
+        ctx.fillRect(sub.x-SUB_LENGTH,sub.y+SUB_HEIHGT,3,3)
+        ctx.fillRect(sub.x-SUB_LENGTH,sub.y-SUB_HEIHGT,3,3)
         if(tile != 0) {
-            if(sub.x > (i%32)*32 && sub.x < (i%32)*32 + 64 && sub.y > 32*j && sub.y < 32*j+32) {
-                speed.x = -speed.x/2
-            }
-        } 
+            
+            if((sub.x+SUB_LENGTH > tp.x && sub.x+SUB_LENGTH < tp.x + 32  && sub.y+SUB_HEIHGT> tp.y && sub.y+SUB_HEIHGT < tp.y + 32) ||
+            (sub.x+SUB_LENGTH > tp.x && sub.x+SUB_LENGTH < tp.x + 32 && sub.y-SUB_HEIHGT > tp.y && sub.y-SUB_HEIHGT < tp.y + 32) || 
+            (sub.x-SUB_LENGTH > tp.x && sub.x-SUB_LENGTH < tp.x + 32 && sub.y+SUB_HEIHGT > tp.y && sub.y+SUB_HEIHGT < tp.y + 32) ||
+            (sub.x-SUB_LENGTH > tp.x && sub.x-SUB_LENGTH < tp.x + 32 && sub.y-SUB_HEIHGT > tp.y && sub.y-SUB_HEIHGT < tp.y + 32))  {
+               
+                
+                speed.x = -(speed.x)
+                speed.y = -(speed.y)
+            
+            
+            } 
+        }
     }
 }
-function drawLevel() {
-        j = 0
-    for(i = 0; i < 32*32; i++) {
-        tile = TileMaps.level2.layers[0].data[i]
-        if(i % 32 === 0) j++
-        if(tile===20) {
-            ctx.drawImage(sprite, 48, 16, 16, 16, 32*(i%32), 32*j, 32, 32)
 
+function initLevel(levelNumber) {
+    LEVEL_WIDTH = TileMaps[levelNumber].height
+    sub.setPoint(311,100)
+    level.tiles = TileMaps[levelNumber].layers[0].data
+    gameState = GAME_STATE_RUN
+    loop()
+}
+
+function drawLevel() {
+    j = 0
+    for(i = 0; i < LEVEL_WIDTH*LEVEL_WIDTH; i++) {
+        tile = level.tiles[i]
+        if(i % LEVEL_WIDTH === 0) j++
+        if(tile!=0) {
+            ctx.drawImage(sprite, 48, 16, 16, 16, 32*(i%100), 32*j, 32, 32)
         }
     }
     
 }
+
+
