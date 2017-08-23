@@ -5,6 +5,8 @@ var accInput = new v2d(0,0)
 SUB_LENGTH= 32
 SUB_HEIHGT = 16
 LEVEL_WIDTH = 0
+SCREEN_WIDTH = 20;
+SCREEN_HEIGHT = 20
 var bubbles = []
 var i,j;
 var level= {};
@@ -29,7 +31,6 @@ function step(delta) {
     
     
     
-    sub.add(speed.maxLength(SPEED==0?2:7))
     //bubbles
     liveBubble(acc.x > 0)
     
@@ -38,28 +39,15 @@ function step(delta) {
     ctx.fillRect(0,0,10000,100000)
     drawLevel()
     
-    /*ctx.save()
-    ctx.globalCompositeOperation = "multiply";
-    var sha = ctx.createRadialGradient(sub.x,sub.y,0,sub.x,sub.y,100)
-    sha.addColorStop(0,"white");
-    sha.addColorStop(1,"black");
-    ctx.restore()
-    ctx.fillStyle = sha 
-    ctx.fillRect(sub.x-100,sub.y-100,200,200)
-*/
+    
+    if(COLIDE) colide()
+    
     
 
-    
     drawSprite(sub, 'SUB', acc.x > 0)
-    colide()
     drawBubble()
     
-    
-    
-    //ui
-    
-    drawUI() 
-    
+    drawUI()
     
 }
 
@@ -119,41 +107,41 @@ function drawSprite(p, img, rev) {
 var tile = 0
 var tp = new v2d(0,0)
 //<3
-var tItleColide = 0
-
+var isC
+var futureSub = new v2d(0,0)
 function colide() {
-    j = 0
-    for(i = 0; i < 100*100; i++) {
-        if(i % 100 === 0) j++
-        tile = level.tiles[i]
-        
-        tItleColide = sub.x*32
-        
-        tp.setPoint(32*(i%100), 32*j)
-        ctx.fillStyle="#00ffff"
-        ctx.fillRect(sub.x+SUB_LENGTH,sub.y+SUB_HEIHGT,3,3)
-        ctx.fillRect(sub.x+SUB_LENGTH,sub.y-SUB_HEIHGT,3,3)
-        ctx.fillRect(sub.x-SUB_LENGTH,sub.y+SUB_HEIHGT,3,3)
-        ctx.fillRect(sub.x-SUB_LENGTH,sub.y-SUB_HEIHGT,3,3)
-        if(tile != 0) {
-            
-            if((sub.x+SUB_LENGTH > tp.x && sub.x+SUB_LENGTH < tp.x + 32  && sub.y+SUB_HEIHGT> tp.y && sub.y+SUB_HEIHGT < tp.y + 32) ||
-            (sub.x+SUB_LENGTH > tp.x && sub.x+SUB_LENGTH < tp.x + 32 && sub.y-SUB_HEIHGT > tp.y && sub.y-SUB_HEIHGT < tp.y + 32) || 
-            (sub.x-SUB_LENGTH > tp.x && sub.x-SUB_LENGTH < tp.x + 32 && sub.y+SUB_HEIHGT > tp.y && sub.y+SUB_HEIHGT < tp.y + 32) ||
-            (sub.x-SUB_LENGTH > tp.x && sub.x-SUB_LENGTH < tp.x + 32 && sub.y-SUB_HEIHGT > tp.y && sub.y-SUB_HEIHGT < tp.y + 32))  {
-               
-                
-                speed.x = -(speed.x)
-                speed.y = -(speed.y)
-            
-            
-            } 
-        }
+    isC = false
+    futureSub.setVector(sub).add(speed.maxLength(SPEED==0?2:7))
+    if(DEBUG) {
+        ctx.beginPath()
+        ctx.rect(sub.x-SUB_LENGTH,sub.y-SUB_HEIHGT, SUB_LENGTH*2, SUB_HEIHGT*2)
+        ctx.strokeStyle = "#00ffff"
+        ctx.stroke()
     }
+
+    if(level.tiles[Math.floor((futureSub.x+SUB_LENGTH)/32) + Math.floor((futureSub.y+SUB_HEIHGT)/32)*LEVEL_WIDTH] != 0) {
+        isC = true
+    }
+    if(level.tiles[Math.floor((futureSub.x+SUB_LENGTH)/32) + Math.floor((futureSub.y-SUB_HEIHGT)/32)*LEVEL_WIDTH] != 0) {
+        isC = true
+    }
+    if(level.tiles[Math.floor((futureSub.x-SUB_LENGTH)/32) + Math.floor((futureSub.y+SUB_HEIHGT)/32)*LEVEL_WIDTH] != 0) {
+        isC = true  
+    } 
+    if(level.tiles[Math.floor((futureSub.x-SUB_LENGTH)/32) + Math.floor((futureSub.y-SUB_HEIHGT)/32)*LEVEL_WIDTH] != 0) {
+          isC = true  
+    }
+    if(!isC) {
+        sub.setVector(futureSub)
+    }
+    
+            
 }
 
 function initLevel(levelNumber) {
-    LEVEL_WIDTH = TileMaps[levelNumber].height
+    cancelAnimationFrame(frameHandler)
+    LEVEL_WIDTH = TileMaps[levelNumber].width
+    LEVEL_HEIGHT= TileMaps[levelNumber].height
     sub.setPoint(311,100)
     level.tiles = TileMaps[levelNumber].layers[0].data
     gameState = GAME_STATE_RUN
@@ -161,12 +149,13 @@ function initLevel(levelNumber) {
 }
 
 function drawLevel() {
-    j = 0
-    for(i = 0; i < LEVEL_WIDTH*LEVEL_WIDTH; i++) {
-        tile = level.tiles[i]
-        if(i % LEVEL_WIDTH === 0) j++
-        if(tile!=0) {
-            ctx.drawImage(sprite, 48, 16, 16, 16, 32*(i%100), 32*j, 32, 32)
+    
+    for(i = 0; i < LEVEL_HEIGHT || i < SCREEN_HEIGHT; i++) {
+        for(j = 0;j < LEVEL_WIDTH || j < SCREEN_WIDTH; j ++) {
+        tile = level.tiles[i*LEVEL_WIDTH+j]
+            if(tile!=0) {
+                ctx.drawImage(sprite, 48, 16, 16, 16, 32*j, 32*i, 32, 32)
+            }
         }
     }
     

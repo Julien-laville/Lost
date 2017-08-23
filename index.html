@@ -2,28 +2,41 @@
 <style>
     * {
         margin: 0;padding: 0;
-        font-family: monospace
-    }
-    #info, #subinfo, #pauseScreen {
-        position: absolute;
-        top:0;
-        color: aliceblue;
         font-family: monospace;
+    }
+    #screen {
+        position: absolute;
+    }
+    #info, #pauseScreen {
+        color: aliceblue;
     }
     #pauseScreen {
         display: none
     }
-    #ui, #screen {
-
+    #info {
+        right: 0;
+        position: absolute;
+    }
+    
+    #levels {
+        position: absolute;
+        height: 300px;
+        margin-top: 100px;
+    }
+    #ui {
+        position: absolute;
+        color:aliceblue;
     }
 </style>
 <canvas id="screen"></canvas>
 <div id=ui></div>
+<div id="info"></div>
+
 <div id="levels">
     <button onclick="initLevel('level1')">Level 1</button>
     <button onclick="initLevel('level2')">Level 2</button>
 </div>
-<div id="info"></div>
+
 <div id="pauseScreen">PAUSE</div>
 
 <script src="level/level1.js"></script>

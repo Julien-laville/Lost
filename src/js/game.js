@@ -5,6 +5,8 @@ var frameHandler = null
 GAME_STATE_PAUSE = 0
 GAME_STATE_RUN = 1
 GAME_STATE_LEVEL = 2
+DEBUG = true
+COLIDE = true
 
 ctx = screen.getContext("2d")
 var m = new v2d(1,1)
@@ -16,7 +18,7 @@ var ips = 0
 function loop() {
 	delta = performance.now() - time
 	ips = 1000 / delta
-	info.innerHTML = ips.toFixed(1)
+	info.innerHTML = ips > 50 ? ips.toFixed(3) : '<span style="color:red">'+ips.toFixed(3)+'</span>'
 
 
 
