@@ -165,10 +165,10 @@ function colide() {
     } else {
         closePos.setVector(nextLine)
     }
-    d = new v2d(speed.x>0?8:-8, speed.y>0?8:-8)
+    d = new v2d(speed.x>0?0:-1, speed.y>0?0:-1)
     closePos.add(d)
     var tile = level.tiles[Math.floor((closePos.x)/32) + Math.floor((closePos.y)/32)*LEVEL_WIDTH]
-    if(tile !== 0) {
+    if(tile !== 0) { //colide
         ctx.strokeStyle = "#CD3378"
                            
     } else {
@@ -182,10 +182,13 @@ function colide() {
     ctx.beginPath()
     ctx.arc(closePos.x,closePos.y, 2, 0, 7)
     ctx.fill()
-    
-    
-
-  
+    var stanceTo = new v2d(closePos.x, closePos.y)
+    stanceTo.sub(corners.ne)
+    if(tile === 0 ||stanceTo.norm() > speed.norm()) {
+        sub.add(speed)
+    } else {
+        
+    }
 }
 
 function initLevel(levelNumber) {
