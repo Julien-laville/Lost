@@ -1,13 +1,68 @@
 <!DOCTYPE html>
-<div id="info"></div>
-<div id="pauseScreen">PAUSE</div>
+<style>
+    * {
+        margin: 0;padding: 0;
+        font-family: monospace;
+    }
+    #screen {
+        position: absolute;
+    }
+    #info, #pauseScreen {
+        color: aliceblue;
+    }
+    button {
+        display: block;
+        background: none;
+        border: none;
+        color: aqua;
+        font-size: 16px;
+    }
+    #pauseScreen {
+        display: none
+    }
+    #info {
+        right: 0;
+        position: absolute;
+    }
+    
+    #levels {
+        position: absolute;
+        height: 300px;
+        margin-top: 100px;
+    }
+    #ui {
+        position: absolute;
+        color:aliceblue;
+    }
+    #status {
+        color : darkgoldenrod;
+        text-align: center;
+        width: 100%;
+        position: absolute;
+        margin-top: 50vh;
+        
+    }
+</style>
 <canvas id="screen"></canvas>
+<div id=ui></div>
+<div id="info"></div>
+<div id="status">datas</div>
 
+<div id="levels">
+    <button onclick="initLevel('level1')">01 - New Game !</button>
+    
+    <button onclick="initLevel('level1')">02 - Level 1(collide)</button>
+    <button onclick="initLevel('level2')">03 - Level 2</button>
+    <button onclick="initLevel('level3')">03 - Level 3(dialog)</button>
+</div>
+
+<div id="pauseScreen">PAUSE</div>
+
+<script src="level/level1.js"></script>
+<script src="level/level2.js"></script>
+<script src="level/level3.js"></script>
 <script src="src/js/v2d.js"></script>
 <script src="src/js/lost.js"></script>
 <script src="src/js/game.js"></script>
 
-<div id=ui>
-    <p id=lightd onclick=toggleL()></p>
-</div>
-<img src="sprite.gif" id="sprite" onload="loop()">
+<img src="sprite.png" style="display: none" id="sprite">

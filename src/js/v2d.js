@@ -13,10 +13,28 @@ function v2d(x,y) {
         return new v2d(this.x,this.y)
     }
     
+    v2d.prototype.invert = function() {
+        this.x = -this.x
+        this.y = -this.y
+        return this
+    }
+    
+    v2d.prototype.maxLength = function(max) {
+        this.tmp = this.norm();
+        if(this.tmp > max) {
+            this.scale(max/this.tmp)
+        }
+        return this
+    }
+    
     v2d.prototype.setVector = function(v) {
         this.x = v.x
         this.y = v.y
         return this
+    }
+    
+    v2d.prototype.cmp = function(v) {
+        return this.norm() > v.norm()
     }
     
     v2d.prototype.X = function(o){
@@ -45,7 +63,7 @@ function v2d(x,y) {
     }
 
     v2d.prototype.toString = function() {
-        return 'x:'+this.x+'|y:'+this.y
+        return `${this.x.toFixed(2)}|${this.y.toFixed(2)}`
     }
     v2d.prototype.x = function() {
         return this.x
