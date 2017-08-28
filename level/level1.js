@@ -30,7 +30,7 @@
         {
          "columns":16,
          "firstgid":1,
-         "image":"..\/sprite.gif",
+         "image":"..\/sprite.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,

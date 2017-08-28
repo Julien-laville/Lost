@@ -191,12 +191,21 @@ function colide() {
     }
 }
 
+var dialog;
+function showDialog() {
+    for(i = 0; i < TileMaps.level3.layers[2].objects.length; i ++) {
+        dialog = TileMaps.level3.layers[2].objects[i]
+        if(sub.x > )
+    }
+}
+
 function initLevel(levelNumber) {
     cancelAnimationFrame(frameHandler)
     LEVEL_WIDTH = TileMaps[levelNumber].width
     LEVEL_HEIGHT= TileMaps[levelNumber].height
     sub.setPoint(311,100)
     level.tiles = TileMaps[levelNumber].layers[0].data
+    
     gameState = GAME_STATE_RUN
     loop()
 }
