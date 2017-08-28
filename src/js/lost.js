@@ -27,7 +27,7 @@ function step(delta) {
         acc.setVector(accInput).normalize()
         speed.add(acc.scale(0.3))
     }
-    
+    speed.maxLength(SPEED==0?2:7)
     
     
     
@@ -107,35 +107,85 @@ function drawSprite(p, img, rev) {
 var tile = 0
 var tp = new v2d(0,0)
 //<3
-var isC
+var isC = true
 var futureSub = new v2d(0,0)
+var nextColumn = new v2d(0,0)
+var nextLine = new v2d(0,0)
+var corners = {ne : new v2d(0,0)}
+var closePos = new v2d(0,0)
 function colide() {
     isC = false
-    futureSub.setVector(sub).add(speed.maxLength(SPEED==0?2:7))
-    if(DEBUG) {
-        ctx.beginPath()
-        ctx.rect(sub.x-SUB_LENGTH,sub.y-SUB_HEIHGT, SUB_LENGTH*2, SUB_HEIHGT*2)
-        ctx.strokeStyle = "#00ffff"
-        ctx.stroke()
-    }
-
-    if(level.tiles[Math.floor((futureSub.x+SUB_LENGTH)/32) + Math.floor((futureSub.y+SUB_HEIHGT)/32)*LEVEL_WIDTH] != 0) {
-        isC = true
-    }
-    if(level.tiles[Math.floor((futureSub.x+SUB_LENGTH)/32) + Math.floor((futureSub.y-SUB_HEIHGT)/32)*LEVEL_WIDTH] != 0) {
-        isC = true
-    }
-    if(level.tiles[Math.floor((futureSub.x-SUB_LENGTH)/32) + Math.floor((futureSub.y+SUB_HEIHGT)/32)*LEVEL_WIDTH] != 0) {
-        isC = true  
-    } 
-    if(level.tiles[Math.floor((futureSub.x-SUB_LENGTH)/32) + Math.floor((futureSub.y-SUB_HEIHGT)/32)*LEVEL_WIDTH] != 0) {
-          isC = true  
-    }
-    if(!isC) {
-        sub.setVector(futureSub)
+    if(speed.stance <= 0) return;
+    corners.ne.setPoint(sub.x+SUB_LENGTH, sub.y-SUB_HEIHGT)
+    
+    if(speed.x>0) { //right
+        C = Math.ceil((corners.ne.x) / 32) * 32 
+    } else { //left
+        C = Math.floor((corners.ne.x) / 32) * 32 
     }
     
-            
+    if(speed.y>0) { //down
+        L = Math.ceil((corners.ne.y) / 32) * 32
+    } else { //top
+        L = Math.floor((corners.ne.y) / 32) * 32
+    }
+    
+    // a: director coefficient
+    a = speed.y / speed.x //y = a * x
+    
+    //interesection with column
+    
+    
+    ctx.beginPath()
+    ctx.moveTo(C, 0)
+    ctx.lineTo(C, 1300 )
+    ctx.strokeStyle = "#ff0000"
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(0, L)
+    ctx.lineTo(1300, L )
+    ctx.strokeStyle = "#ff0000"
+    ctx.stroke()
+
+    
+    ctx.beginPath()
+    ctx.moveTo(corners.ne.x, corners.ne.y)
+    ctx.lineTo(sub.x+SUB_LENGTH +speed.x*1000, sub.y-SUB_HEIHGT + speed.y*1000 )
+    ctx.strokeStyle = "#FFFFFF"
+    ctx.stroke()
+    
+    // Find intersection with column C
+    nextColumn.setPoint(C,  a * (C - sub.x - SUB_LENGTH) + sub.y - SUB_HEIHGT)
+    nextLine.setPoint((L-sub.y+SUB_HEIHGT) / (a) + sub.x+SUB_LENGTH, L)
+    
+    ctx.fillStyle = "#00FF00"
+
+    if(nextColumn.stance(corners.ne) < nextLine.stance(corners.ne))  {
+        closePos.setVector(nextColumn)
+    } else {
+        closePos.setVector(nextLine)
+    }
+    d = new v2d(speed.x>0?8:-8, speed.y>0?8:-8)
+    closePos.add(d)
+    var tile = level.tiles[Math.floor((closePos.x)/32) + Math.floor((closePos.y)/32)*LEVEL_WIDTH]
+    if(tile !== 0) {
+        ctx.strokeStyle = "#CD3378"
+                           
+    } else {
+        ctx.strokeStyle = "#00FF00"
+    }
+    ctx.beginPath()
+    ctx.rect(Math.floor((closePos.x)/32) * 32, Math.floor((closePos.y)/32)*32, 32,32)
+    ctx.stroke()
+
+    
+    ctx.beginPath()
+    ctx.arc(closePos.x,closePos.y, 2, 0, 7)
+    ctx.fill()
+    
+    
+
+  
 }
 
 function initLevel(levelNumber) {

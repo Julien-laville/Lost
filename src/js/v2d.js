@@ -33,6 +33,10 @@ function v2d(x,y) {
         return this
     }
     
+    v2d.prototype.cmp = function(v) {
+        return this.norm() > v.norm()
+    }
+    
     v2d.prototype.X = function(o){
         this.x=this.x*o.x;
         this.y=this.y*o.y;
