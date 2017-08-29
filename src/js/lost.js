@@ -46,7 +46,7 @@ function step(delta) {
 
     drawSprite(sub, 'SUB', acc.x > 0)
     drawBubble()
-    
+    showDialog()
     drawUI()
     
 }
@@ -195,7 +195,9 @@ var dialog;
 function showDialog() {
     for(i = 0; i < TileMaps.level3.layers[2].objects.length; i ++) {
         dialog = TileMaps.level3.layers[2].objects[i]
-        if(sub.x > )
+        if(sub.x > dialog.x*2 && sub.x < dialog.x*2 + dialog.width*2 && sub.y > dialog.y*2 && sub.y < dialog.y*2 + dialog.height*2) {
+            dialogd.innerHTML = dialog.properties.ct
+        }
     }
 }
 
