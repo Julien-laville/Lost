@@ -2,8 +2,8 @@ var sub = new v2d(0,0)
 var speed = new v2d(3,2)
 var SPEED = 0
 var accInput = new v2d(0,0)
-SUB_LENGTH= 32
-SUB_HEIHGT = 16
+SUB_LENGTH= 64
+SUB_HEIHGT = 32
 LEVEL_WIDTH = 0
 SCREEN_WIDTH = 20;
 SCREEN_HEIGHT = 20;
@@ -18,6 +18,7 @@ var level= {};
 for(i = 0; i < 10; i ++) {
     bubbles.push({pos : new v2d(0,0), size : 10*i % 70})
 }
+
 
 var acc = new v2d(0,0)
 function step(delta) {
@@ -55,7 +56,7 @@ function step(delta) {
     
     
 
-    drawSprite(sub, 'SUB', acc.x > 0)
+    drawSprite(sub, 0, acc.x > 0)
     drawBubble()
     showDialog()
     drawUI()
@@ -80,10 +81,20 @@ function drawUI() {
 
 function drawBubble() {
     ctx.strokeStyle = "#ffffff"
+    
+    
     for(var i = 0;i < bubbles.length; i ++) {
         if(bubbles[i].size > 0)  {
             ctx.beginPath()
             ctx.arc(bubbles[i].pos.x, bubbles[i].pos.y, bubbles[i].size/10, 0, Math.PI*2)
+            ctx.closePath()
+            ctx.stroke()
+        }
+    }
+    for(var i = 0;i < bubble2.length; i ++) {
+        if(bubble2[i].size > 0)  {
+            ctx.beginPath()
+            ctx.arc(bubble2[i].pos.x, bubble2[i].pos.y, bubble2[i].size/10, 0, Math.PI*2)
             ctx.closePath()
             ctx.stroke()
         }
@@ -93,27 +104,39 @@ function liveBubble(rev) {
     for(var i = 0; i < bubbles.length; i ++) {
         if(bubbles[i].size < 0) {
             bubbles[i].size = 70
-            bubbles[i].pos = sub.clone().add(new v2d(Math.random()*5+(rev ? -32 : 32), Math.random()*5))
+            bubbles[i].pos = sub.clone().add(new v2d(Math.random()*5+(rev ? -64 : 64), Math.random()*5))
         } else{
             bubbles[i].pos.add(new v2d(Math.cos(time+bubbles[i].pos.y), -1.5))
             bubbles[i].size-- 
         }
     }
+    
+    for(var i = 0; i < bubble2.length; i ++) {
+        if(bubble2[i].size < 0) {
+            bubble2[i].size = 70
+            bubble2[i].pos.setVector(bubble2[i].save)
+        } else{
+            var dir = new v2d( bubble2[i].dir === 2 ?4 : -4,0)
+            bubble2[i].pos.add(dir)
+            bubble2[i].size-- 
+        }
+    }
 }
 
+sprt = [
+    0,0,64,32,//sub
+    64,128,32,32//harp
+]
 
 function drawSprite(p, img, rev) {
-    //ctx["mozImageSmoothingEnabled"] = false;
     ctx["imageSmoothingEnabled"] = false;
-
-    
     if(rev === true) {
         ctx.save()
         ctx.translate(sub.x, sub.y)
         ctx.scale(-1, 1);        
         ctx.translate(-sub.x, -sub.y)
     }
-    ctx.drawImage(sprite, 0, 0, 32, 16, p.x-32, p.y-16, 64, 32)
+    ctx.drawImage(sprite, sprt[img*4], sprt[img*4+1], sprt[img*4+2], sprt[img*4+3], p.x-32, p.y-16, sprt[img*4+2]*2, sprt[img*4+3]*2)
     if(rev === true) {
         ctx.restore()
     }
@@ -222,13 +245,28 @@ function testTrigger() {
         trigger = TileMaps.level3.layers[3].objects[i]
         if(sub.x > trigger.x*2 && sub.x < trigger.x*2 + trigger.width*2 && sub.y > trigger.y*2 && sub.y < trigger.y*2 + trigger.height*2) {
             if(trigger.type === 'shutdown') {
-                console.log('shutdown')
                 isShutdown = true
             } 
+            if(trigger.type === 'start') {
+                isShutdown = false
+            }
+            if(trigger.type === 'powup') {
+                if(trigger.properties.i === 1) {
+                    harpoon = 1
+                    dialog.innerHTML = 'Harpoon aquiererd'
+                } 
+            }
+            if(trigger.type === 'stream') {
+                if(trigger.properties.dir === 1) {
+                    speed.sub(new v2d(30,10))
+                }
+            }
         }
     }
 }
 
+
+bubble2 = []
 function initLevel(levelNumber) {
     cancelAnimationFrame(frameHandler)
     LEVEL_WIDTH = TileMaps[levelNumber].width
@@ -237,20 +275,45 @@ function initLevel(levelNumber) {
     level.tiles = TileMaps[levelNumber].layers[0].data
     
     gameState = GAME_STATE_RUN
-    loop()
-}
-
-function drawLevel() {
     
-    for(i = 0; i < LEVEL_HEIGHT || i < SCREEN_HEIGHT; i++) {
-        for(j = 0;j < LEVEL_WIDTH || j < SCREEN_WIDTH; j ++) {
-        tile = level.tiles[i*LEVEL_WIDTH+j]
-            if(tile!=0) {
-                ctx.drawImage(sprite, 48, 16, 16, 16, 32*j, 32*i, 32, 32)
+    for(i = 0; i < TileMaps.level3.layers[3].objects.length; i ++) {    
+        var obj = TileMaps.level3.layers[3].objects[i]
+        if(obj.type === 'stream') {
+            for(i = 0; i < 30; i ++) {
+                var p = new v2d(2*obj.x+2*Math.random()*obj.width,2*obj.y+2*Math.random()*obj.height)
+                bubble2.push({pos : p, save : p.clone(), size : 10*i % 70, dir : obj.dir})
             }
         }
     }
     
+    loop()
+}
+
+function drawPowUp() {
+    for(i = 0; i < TileMaps.level3.layers[3].objects.length; i ++) {
+        powup = TileMaps.level3.layers[3].objects[i]
+        if(powup.type === 'powup') {
+            if(powup.properties.i == 1) {   
+                drawSprite(new v2d().setVector(powup).scale(2), 1) 
+            }
+        }
+    }
+} 
+
+tilesT = []
+tilesT[20] = [96, 32]
+tilesT[81] = [0, 160]
+function drawLevel() { 
+    drawPowUp()
+    for(i = 0; i < LEVEL_HEIGHT || i < SCREEN_HEIGHT; i++) {
+        for(j = 0;j < LEVEL_WIDTH || j < SCREEN_WIDTH; j ++) {
+        tile = level.tiles[i*LEVEL_WIDTH+j]
+
+            if(tilesT[tile]) {
+                ctx.drawImage(sprite, tilesT[tile][0], tilesT[tile][1], 32, 32, 64*j, 64*i, 64, 64)
+            }
+        }
+    }
 }
 
 

@@ -1,0 +1,36 @@
+Tilemancer 0.2.1
+
+Color 12 46 94
+PaletteSave1 
+PaletteSave2 
+FileSave1 \Users\Tchaardge-orange\Documents\GitHub\Lost\level
+FileSave2 tile
+Indexed 0
+Size 32
+Camera 0 0
+Node {
+Name cells.lua
+Position 178.033 21.9919
+Parameter 0 -1 -1 0
+Parameter 2 2 -1 0
+Parameter 55 0 100 0
+Parameter 76 0 -1 0
+}
+Node {
+Name blend.lua
+Position 341.209 187.935
+Parameter 0 0 5 0
+Parameter 100 0 100 0
+Connection 0 0 0
+Connection 1 2 0
+}
+Node {
+Name colorizer.lua
+Position 182.925 208.347
+Ramp {
+Point 0 0 0 1
+}
+Parameter 0 0 0 0
+Parameter 0 0 0 0
+Parameter 0 0 1 0
+}
