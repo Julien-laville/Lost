@@ -135,6 +135,15 @@ sprt = [
     64,128,32,32//harp
 ]
 
+
+function gamo() {
+    for(i=0;i<40;i++) {
+        bubbles.push({pos : new v2d(sub.x-SUB_LENGTH+Math.random()*SUB_LENGTH*2, sub.y-SUB_HEIHGT+Math.random()*SUB_HEIHGT*2), size : 10*i % 70})    
+    }
+    isShutdown=true
+    
+}
+
 function drawSprite(p, img, rev) {
     ctx["imageSmoothingEnabled"] = false;
     if(rev === true) {
