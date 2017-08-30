@@ -13,13 +13,19 @@
     vfx.width = screen.width
     vfx.height = screen.height
 
-
-    var maskSize =1
+    zoomF = 1.1
+    expoRadius =1
+    expoLive = 0
+    
+    expoCenterX = 350
+    expoCenterY= 350
     
     
-    expoCenter = [350,350]
-    
-    
+    ca.onclick = function(e) {
+        expoLive = 60;expoRadius =1
+        expoCenterX = e.offsetX
+        expoCenterY= e.offsetY
+    }
 
     
     
@@ -28,25 +34,28 @@
         vfx.width+=0
         
         ctx.drawImage(aqua,0,0)
-        ctx.getImageData(0,0,screen.width,screen.height)
-        ctx2.drawImage(ca,0,0,screen.width,screen.height, 0,0,screen.width*2,screen.height*2)
+        if(expoLive > 0) {
+            
+        ctx2.drawImage(ca,expoCenterX-expoRadius/2,expoCenterY-expoRadius/2,expoRadius,expoRadius, 0,0,expoRadius*2,expoRadius*2)
         
         
        // ctx.drawImage(vfx,0,0,screen.width,screen.height)
         
-        ctx2.globalCompositeOperation = 'destination-in'
+    ctx2.globalCompositeOperation = 'destination-in'
 
         ctx2.beginPath()
-        ctx2.arc(0,0, maskSize, 0, Math.PI*2)
-        ctx2.arc(0,0, Math.max(0,  maskSize-30), 0, Math.PI*2,true)
+        ctx2.arc(expoRadius,expoRadius, expoRadius, 0, Math.PI*2)
+        ctx2.arc(expoRadius,expoRadius, Math.max(0,  expoRadius-expoLive), 0, Math.PI*2,true)
         ctx2.fillStyle = "#00ff00;"
         ctx2.fill()
         
-        ctx.drawImage(vfx,0,0,screen.width,screen.height)
+        ctx.drawImage(vfx,expoCenterX-expoRadius,expoCenterY-expoRadius,screen.width,screen.height)
 
+        }
         
         requestAnimationFrame(step)
-        maskSize++
+        expoRadius++
+        expoLive--
     }
     
     step()
