@@ -6,7 +6,12 @@ SUB_LENGTH= 32
 SUB_HEIHGT = 16
 LEVEL_WIDTH = 0
 SCREEN_WIDTH = 20;
-SCREEN_HEIGHT = 20
+SCREEN_HEIGHT = 20;
+
+//sub carac
+isShutdown = false
+harpoon = 0
+
 var bubbles = []
 var i,j;
 var level= {};
@@ -17,7 +22,10 @@ for(i = 0; i < 10; i ++) {
 var acc = new v2d(0,0)
 function step(delta) {
     //mv
-    accInput = acc.setVector(m).sub(sub)
+  
+ 
+        accInput = acc.setVector(m).sub(sub)
+    
     if(accInput.norm() < 50) {
         speed.scale(0.9)
         if(speed.norm() < 1) {
@@ -27,9 +35,12 @@ function step(delta) {
         acc.setVector(accInput).normalize()
         speed.add(acc.scale(0.3))
     }
+    if(isShutdown) {
+        speed.setPoint(0,1)
+    }
     speed.maxLength(SPEED==0?2:7)
     
-    
+    testTrigger()
     
     //bubbles
     liveBubble(acc.x > 0)
@@ -46,13 +57,17 @@ function step(delta) {
 
     drawSprite(sub, 'SUB', acc.x > 0)
     drawBubble()
-    
+    showDialog()
     drawUI()
     
 }
 
 
 function drawUI() {
+    if(isShutdown) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)'
+        ctx.fillRect(0,0,screen.width,screen.height)
+    }
 
     ctx.beginPath()
     ctx.strokeStyle = "#fff"
@@ -195,7 +210,22 @@ var dialog;
 function showDialog() {
     for(i = 0; i < TileMaps.level3.layers[2].objects.length; i ++) {
         dialog = TileMaps.level3.layers[2].objects[i]
-        if(sub.x > )
+        if(sub.x > dialog.x*2 && sub.x < dialog.x*2 + dialog.width*2 && sub.y > dialog.y*2 && sub.y < dialog.y*2 + dialog.height*2) {
+            dialogd.innerHTML = dialog.properties.ct
+        }
+    }
+}
+
+var trigger;
+function testTrigger() {
+    for(i = 0; i < TileMaps.level3.layers[3].objects.length; i ++) {
+        trigger = TileMaps.level3.layers[3].objects[i]
+        if(sub.x > trigger.x*2 && sub.x < trigger.x*2 + trigger.width*2 && sub.y > trigger.y*2 && sub.y < trigger.y*2 + trigger.height*2) {
+            if(trigger.type === 'shutdown') {
+                console.log('shutdown')
+                isShutdown = true
+            } 
+        }
     }
 }
 
