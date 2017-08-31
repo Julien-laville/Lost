@@ -187,17 +187,21 @@ function collide() {
             closePos.setVector(speed).normalize().scale(j)
             futureDelta = closePos.clone()
             closePos.add(corner)
-            var tile = level.tiles[Math.floor((closePos.x)/32) + Math.floor((closePos.y)/32)*LEVEL_WIDTH]
-            
+            var tile = level.tiles[Math.floor((closePos.x)/64) + Math.floor((closePos.y)/64)*LEVEL_WIDTH]
+            if(tile==81) {
+                gamo();return;
+            }
+
             if(tile !== 0) { 
                 ctx.strokeStyle = "#CD3378"
             } else {
                 ctx.strokeStyle = "#00FF00"
             }
-            
-            ctx.beginPath()
-            ctx.rect(Math.floor((closePos.x)/32) * 64-c.x+screen.width/2, Math.floor((closePos.y)/32)*32-c.y+screen.height/2, 64,64)
-            ctx.stroke()
+            if(DEBUG) {
+                ctx.beginPath()
+                ctx.rect(Math.floor((closePos.x)/64) * 64-c.x+screen.width/2, Math.floor((closePos.y)/64)*64-c.y+screen.height/2, 64,64)
+                ctx.stroke()
+            } 
             if(tile!==0) {
                 isC = true
                 break
@@ -210,11 +214,13 @@ function collide() {
             ctx.strokeStyle = "#007700"
 
         }
-        
-        ctx.beginPath()
-        ctx.moveTo(corner.x-c.x+screen.width/2, corner.y-c.y+screen.height/2)
-        ctx.lineTo(corner.x+speed.x*1000, corner.y + speed.y*1000)
-        ctx.stroke()
+        if(DEBUG) {
+            ctx.beginPath()
+            ctx.moveTo(corner.x-c.x+screen.width/2, corner.y-c.y+screen.height/2)
+            ctx.lineTo(corner.x+speed.x*1000, corner.y + speed.y*1000)
+            ctx.stroke()
+        }
+
             
         if(isC) {
             break
@@ -222,7 +228,6 @@ function collide() {
         moveOk.setVector(futureDelta)
     }
     sub.add(moveOk)
-   
 }
 
 var dialog;
