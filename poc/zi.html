@@ -1,0 +1,9 @@
+<script>
+
+    var audioCtx = new AudioContext();
+    var oscillator = audioCtx.createOscillator();
+    oscillator.type = 'square';
+oscillator.frequency.value = 3000; // value in hertz
+oscillator.connect(audioCtx.destination);
+oscillator.start();
+</script>

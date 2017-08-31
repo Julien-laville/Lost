@@ -6,7 +6,7 @@ GAME_STATE_PAUSE = 0
 GAME_STATE_RUN = 1
 GAME_STATE_LEVEL = 2
 DEBUG = true
-COLIDE = true
+COLLIDE = true
 
 ctx = screen.getContext("2d")
 var m = new v2d(1,1)
