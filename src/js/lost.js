@@ -42,7 +42,7 @@ function step(delta) {
     if(isShutdown) {
         speed.setPoint(0,1.1)
     }
-    
+    liveProjectile()
     weaponCicle()
     speed.maxLength(SPEED==0?2:7)
     
@@ -54,16 +54,16 @@ function step(delta) {
     render()
     
     if(COLLIDE) collide()
-  
+    drawWeapon()
     showDialog()
     drawUI()
     
 }
 
-screen.onmousedown = function() {
+window.onmousedown = function() {
     arming = true
 }
-screen.onmouseup = function() {
+window.onmouseup = function() {
     arming = false
     if(chaarge>100) {
         fire()
@@ -76,8 +76,63 @@ function weaponCicle() {
     }
 }
 
+arrows = []
+arrow = null
+freeArrow = null
+var arpoonO = new v2d(0,0)
+var arpoonDelta = new v2d(60,64)
+var visor = new v2d(0,0)
 function fire() {
+    if(chaarge < 300) {
+        chaarge=0;return
+    }
+    freeArrow = false
+    visor.setVector(sub).add(arpoonDelta)
+    visor.sub(m)
+        
+    for(i=0; i<arrows.length;i++) {
+        if(!arrows[i].isAlive) {
+            arrows[i].setVector(sub).add(arpoonDelta)
+            arrows[i].dir = visor.clone()
+            arrows[i].isAlive=true
+            freeArrow = true
+        } 
+    }
+   
+    if(freeArrow === false) {
+        arrow = new v2d(0,0)
+        arrow.setVector(sub).add(arpoonDelta)
+        arrow.isAlive=true
+        arrow.dir = visor.clone()
+        arrows.push(arrow) 
+    }       
+    chaarge = 0
+}
+
+function liveProjectile() {
+    for(i=0;i < arrows.length;i++) {
+        if(arrows[i].isAlive)
+            arrows[i].add(arrows[i].dir.normalize().scale(2))
+    }
+}
+
+function drawWeapon() {
+    for(i=0;i < arrows.length;i++) {
+        if(arrows[i].isAlive) {
+            ctx.beginPath()
+            ctx.arc(arrows[i].x-c.x+screen.width/2,arrows[i].y-c.y+screen.height/2,3,0,2*Math.PI)
+            ctx.fillStyle="#444"
+            ctx.fill()
+        }
+    }
     
+    if(arming) {
+        arpoonO.setVector(sub).add(arpoonDelta)
+        ctx.beginPath()
+        ctx.moveTo(arpoonO.x-c.x+screen.width/2, arpoonO.y-c.y+screen.height/2)
+        ctx.lineTo(visor.x*chaarge-c.x+screen.width/2, visor.y*chaarge-c.y+screen.height/2)
+        ctx.stroke()
+    }
 }
 
 
