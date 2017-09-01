@@ -12,8 +12,9 @@ SCREEN_HEIGHT = 20;
 
 //sub carac
 isShutdown = false
-harpoon = 0
-
+harpoon = 1
+arming = 0
+chaarge = 0
 var bubbles = []
 var i,j;
 var level= {};
@@ -39,8 +40,10 @@ function step(delta) {
     c.x = sub.x
     c.y = sub.y
     if(isShutdown) {
-        speed.setPoint(0,1)
+        speed.setPoint(0,1.1)
     }
+    
+    weaponCicle()
     speed.maxLength(SPEED==0?2:7)
     
     testTrigger()
@@ -57,6 +60,26 @@ function step(delta) {
     
 }
 
+screen.onmousedown = function() {
+    arming = true
+}
+screen.onmouseup = function() {
+    arming = false
+    if(chaarge>100) {
+        fire()
+    }
+}
+
+function weaponCicle() {
+    if(arming) {
+        chaarge+=delta
+    }
+}
+
+function fire() {
+    
+}
+
 
 function drawUI() {
     if(isShutdown) {
@@ -69,7 +92,7 @@ function drawUI() {
     ctx.arc(sub.x-c.x+screen.width/2+SUB_LENGTH/2,sub.y-c.y+screen.height/2+SUB_HEIHGT/2, 72, 0, Math.PI*2)
     ctx.closePath()
     ctx.stroke()
-    ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>`
+    ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>${chaarge}`
 }
 
 
