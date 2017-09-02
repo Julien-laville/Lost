@@ -147,15 +147,9 @@ function drawUI() {
     ctx.arc(sub.x-c.x+screen.width/2+SUB_LENGTH/2,sub.y-c.y+screen.height/2+SUB_HEIHGT/2, 72, 0, Math.PI*2)
     ctx.closePath()
     ctx.stroke()
-    ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>${chaarge}`
+    ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>harpoon ${harpoon ? 'armed' : 'error'}<br>${chaarge<200?'▯ ▯ ▯':chaarge>400&&chaarge<600?'▮ ▮ ▯':chaarge>600?'▮ ▮ ▮': '▮ ▯ ▯'}`
 }
 
-
-function explode() {
-    
-    
-    
-}
 
 function render() {
     drawBack()
@@ -214,7 +208,6 @@ function liveBubble(rev) {
             b.size-- 
         }
     }
-   
 }
 
 sprt = [
@@ -233,8 +226,8 @@ function gamo() {
 
 function drawSprite(p, img, rev) {
     ctx["imageSmoothingEnabled"] = false
-    ctx.drawImage(sprite, sprt[img*4], sprt[img*4+1], sprt[img*4+2], sprt[img*4+3], p.x-c.x+screen.width/2, p.y-c.y+screen.height/2, sprt[img*4+2]*2, sprt[img*4+3]*2)
-    ctx["imageSmoothingEnabled"] = true
+    ctx.drawImage(sprite, sprt[img*4]+rev?sprt[img*4+2]:0, sprt[img*4+1], sprt[img*4+2], sprt[img*4+3], p.x-c.x+screen.width/2, p.y-c.y+screen.height/2, sprt[img*4+2]*2, sprt[img*4+3]*2)
+   // ctx["imageSmoothingEnabled"] = true
 }
 
 var tile = 0
@@ -350,6 +343,8 @@ function testTrigger() {
 
 
 function initLevel(levelNumber) {
+    homeD.style.display = 'none'
+    levelsD.style.display = 'none'
     cancelAnimationFrame(frameHandler)
     LEVEL_WIDTH = TileMaps[levelNumber].width
     LEVEL_HEIGHT= TileMaps[levelNumber].height

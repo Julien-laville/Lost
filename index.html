@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <style>
+    body {background: #111;overflow: hidden}
+    H2 {
+        color: #fff;font-weight: normal;font-size: 16px;
+    }
     * {
         margin: 0;padding: 0;
         font-family: monospace;
@@ -7,40 +11,33 @@
     #screen {
         position: absolute;
     }
-    #info, #pauseScreen {
-        color: aliceblue;
-    }
+
     button {
         display: block;
         background: none;
         border: none;
-        color: aqua;
+        color: #fff;
         font-size: 16px;
     }
     #pauseScreen {
-        display: none
+        display: none;
+        width: 393px;
+        position: absolute;
+        margin: calc(25vh + 200px) 0 0 calc(50vw - 200px)
     }
     #info {
         right: 0;
         position: absolute;
     }
     
-    #levels {
+    #levelsD {
         position: absolute;
         height: 300px;
-        margin-top: 100px;
+        margin: calc(25vh + 200px) 0 0 calc(50vw - 200px)
     }
     #ui {
         position: absolute;
         color:aliceblue;
-    }
-    #statusd {
-        color : darkgoldenrod;
-        text-align: center;
-        width: 100%;
-        position: absolute;
-        margin-top: 50vh;
-        
     }
     #dialogd {
         font-size: 18px;
@@ -50,22 +47,53 @@
         bottom: 100px;
         width: 100%;
     }
+    #homeImg {
+        position: absolute;
+        width: 393px;
+        height: 199px;
+        background-color: #111;
+        background-image: url(sprite.png);
+        background-position: 0 -97px;
+        margin: 25vh 0 0 calc(50vw - 200px);
+    }
+    #menu {
+        width: 393px;
+        color : #fff;
+        position: absolute;
+        margin: calc(25vh + 200px) 0 0 calc(50vw - 200px)
+    }
 </style>
 <canvas id="screen"></canvas>
 <div id=ui></div>
 <div id="info"></div>
-<div id="statusd">datas</div>
 <div id="dialogd">dialog</div>
-
-<div id="levels">
-    <button onclick="initLevel('level1')">01 - New Game !</button>
+<div id="homeD">
+    <div id="homeImg"></div> 
+    <div id="menu">
+        <button onclick="initLevel('level1')">Begin story</button>
+        <button onclick="levels()">Levels</button>
+    </div>
     
-    <button onclick="initLevel('level1')">02 - Level 1(collide)</button>
-    <button onclick="initLevel('level2')">03 - Level 2</button>
-    <button onclick="initLevel('level3')">03 - Level 3(dialog)</button>
+    <div id="levelsD" style="display: none">
+        <h2> - Levels - </h2>
+        <button onclick="initLevel('level1')">02 - Level 1(collide)</button>
+        <button onclick="initLevel('level2')">03 - Level 2</button>
+        <button onclick="initLevel('level3')">03 - Level 3(dialog)</button>
+
+        <br>
+
+        <button onclick="home()">Back</button>
+    </div>
+    
+    <div id="pauseScreen">
+        <h2> - Pause - </h2>
+        <button onclick="home()">Home</button>
+    </div>
 </div>
 
-<div id="pauseScreen">PAUSE</div>
+
+
+
 
 <script src="level/level1.js"></script>
 <script src="level/level2.js"></script>
@@ -73,5 +101,7 @@
 <script src="src/js/v2d.js"></script>
 <script src="src/js/lost.js"></script>
 <script src="src/js/game.js"></script>
+
+
 
 <img src="sprite.png" style="display: none" id="sprite">

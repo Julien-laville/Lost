@@ -39,7 +39,6 @@ function loop() {
 
 gameState = GAME_STATE_LEVEL
 
-
 window.onkeypress =function(e) {
 	if(e.keyCode === 32) {
 		if(gameState===GAME_STATE_RUN) {
@@ -47,10 +46,15 @@ window.onkeypress =function(e) {
 			cancelAnimationFrame(frameHandler)
 			gameState = GAME_STATE_PAUSE
 			pauseScreen.style.display = 'block'
+			homeD.style.display = 'block'
+            levelsD.style.display = 'none'
+            menu.style.display = 'none'
+            screen.width += 0
 		} else {
 			//run
 			loop()
 			gameState = GAME_STATE_RUN
+			homeD.style.display = 'none'
 			pauseScreen.style.display = 'none'
 		}
 	} else if(e.keyCode === 97) {
@@ -60,7 +64,23 @@ window.onkeypress =function(e) {
     }
 }
 
+
 window.onmousemove = function(e) {
     m.x = e.pageX
     m.y = e.pageY
+}
+
+
+// menu 
+
+function home() {
+    menu.style.display = 'block'
+    levelsD.style.display = 'none';
+    pauseScreen.style.display = 'none'
+}
+
+function levels() {
+    menu.style.display = 'none'
+    pauseScreen.style.display = 'none'
+    levelsD.style.display = 'block';
 }
