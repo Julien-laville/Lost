@@ -21,6 +21,11 @@ var bubbles = []
 var i,j;
 var level= {};
 screenCenter=null
+boss = {
+    p : new v2d(0,0),
+    seq : 0,
+    hp : 10
+}
 
 
 
@@ -44,6 +49,7 @@ function step(delta) {
     }
     c.x = sub.x
     c.y = sub.y
+    liveHostile()
     if(isShutdown) {
         speed.setPoint(0,1.1)
     }
@@ -122,6 +128,15 @@ function liveProjectile() {
     }
 }
 
+function liveHostile() {
+
+}
+
+function drawHostile() {
+    drawAbSprite(boss.p,3)
+
+}
+
 function drawWeapon() {
     for(i=0;i < arrows.length;i++) {
         if(arrows[i].isAlive) {
@@ -131,7 +146,7 @@ function drawWeapon() {
             ctx.fill()
         }
     }
-    
+
     
     if(arming) {
         arpoonO.setVector(sub).add(arpoonDelta)
@@ -143,20 +158,21 @@ function drawWeapon() {
         visorOO.normalize()
         ///visorOO.sub(arpoonO)
 
-        for(i=0; i < 3;i++) {
-            visorOO.scale(30)
-            drawSprite(visorOO,3)
+
+        for(i=1; i < Math.min(chaarge/200,4);i++) {
+            visorOO.normalize().scale(100*i)
+            drawAbSprite(visorOO.clone().add(new v2d(screen.width/2+60,screen.height/2+60)),2)
         }
+        drawAbSprite(m,3)
         //visorOO.add(screenCenter)
         //visorOO.scale(30)
-        //ctx.lineTo(visorOO.x+screen.width/2+arpoonDelta.x,visorOO.y+screen.height/2+arpoonDelta.x)
-        ctx.strokeStyle= "rgba(255,255,255,0.5)"
-        ctx.stroke()
-      
+
+    } else {
+        drawAbSprite(m,4)
     }
 }
 
-
+c=''
 function drawUI() {
     ctx.beginPath()
     ctx.strokeStyle = "#fff"
@@ -175,9 +191,14 @@ function drawUI() {
         ctx.font = '30px Arial'
         ctx.fillText('All is lost', screen.width/2,screen.height/2,500)
     }
+    c=''
+    for(i=0;i<10;i++) {
+        c+= boss.hp>i?' ▮': ' ▯'
+    }
+
 
     
-    ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>harpoon ${harpoon ? 'armed' : 'error'}<br>${chaarge<200?'▯ ▯ ▯':chaarge>400&&chaarge<600?'▮ ▮ ▯':chaarge>600?'▮ ▮ ▮': '▮ ▯ ▯'}`
+    ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>harpoon ${harpoon ? 'armed' : 'error'}<br>${chaarge<200?'▯ ▯ ▯':chaarge>400&&chaarge<600?'▮ ▮ ▯':chaarge>600?'▮ ▮ ▮': '▮ ▯ ▯'}<div id="boss">${c}</div>`
 }
 
 
@@ -186,6 +207,7 @@ function render() {
     drawLevel()
     drawPlayer()
     drawBubble()
+    drawHostile()
 }
 
 function drawBack() {
@@ -258,6 +280,11 @@ function drawSprite(p, img, rev) {
     ctx["imageSmoothingEnabled"] = false
     ctx.drawImage(sprite, sprt[img*4]+rev?sprt[img*4+2]:0, sprt[img*4+1], sprt[img*4+2], sprt[img*4+3], p.x-c.x+screen.width/2, p.y-c.y+screen.height/2, sprt[img*4+2]*2, sprt[img*4+3]*2)
    // ctx["imageSmoothingEnabled"] = true
+}
+
+function drawAbSprite(p, img) {
+    ctx.drawImage(sprite, sprt[img*4], sprt[img*4+1], sprt[img*4+2], sprt[img*4+3], p.x, p.y, sprt[img*4+2]*2, sprt[img*4+3]*2)
+
 }
 
 var tile = 0
