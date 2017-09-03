@@ -15,20 +15,25 @@ isShutdown = false
 harpoon = 1
 arming = 0
 chaarge = 0
+isDead = false
+fade=0
 var bubbles = []
 var i,j;
 var level= {};
-var screenCenter = new v2d(screen.width/2,screen.height/2)
+screenCenter=null
 
 
 
 var acc = new v2d(0,0)
 function step(delta) {
   
- 
+    if(isDead) {
+        fade++;
+    }
+    
     accInput = acc.setVector(m).sub(screenCenter)
     
-    if(accInput.norm() < 50) {
+    if(accInput.norm() < 100) {
         speed.scale(0.9)
         if(speed.norm() < 1) {
             speed.setPoint(0,0)
@@ -87,8 +92,9 @@ function fire() {
         chaarge=0;return
     }
     freeArrow = false
-    visor.setVector(sub).add(arpoonDelta)
-    visor.sub(m)
+    visor.setVector(m)
+    visor.sub(screenCenter)
+
         
     for(i=0; i<arrows.length;i++) {
         if(!arrows[i].isAlive) {
@@ -112,7 +118,7 @@ function fire() {
 function liveProjectile() {
     for(i=0;i < arrows.length;i++) {
         if(arrows[i].isAlive)
-            arrows[i].add(arrows[i].dir.normalize().scale(2))
+            arrows[i].add(arrows[i].dir.normalize().scale(8))
     }
 }
 
@@ -126,27 +132,51 @@ function drawWeapon() {
         }
     }
     
+    
     if(arming) {
         arpoonO.setVector(sub).add(arpoonDelta)
         ctx.beginPath()
         ctx.moveTo(arpoonO.x-c.x+screen.width/2, arpoonO.y-c.y+screen.height/2)
-        ctx.lineTo(visor.x*chaarge-c.x+screen.width/2, visor.y*chaarge-c.y+screen.height/2)
+        var visorOO = new v2d(m.x,m.y)
+        visorOO.sub(new v2d(2,32))
+        visorOO.sub(screenCenter)
+        visorOO.normalize()
+        ///visorOO.sub(arpoonO)
+
+        for(i=0; i < 3;i++) {
+            visorOO.scale(30)
+            drawSprite(visorOO,3)
+        }
+        //visorOO.add(screenCenter)
+        //visorOO.scale(30)
+        //ctx.lineTo(visorOO.x+screen.width/2+arpoonDelta.x,visorOO.y+screen.height/2+arpoonDelta.x)
+        ctx.strokeStyle= "rgba(255,255,255,0.5)"
         ctx.stroke()
+      
     }
 }
 
 
 function drawUI() {
-    if(isShutdown) {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)'
-        ctx.fillRect(0,0,screen.width,screen.height)
-    }
-
     ctx.beginPath()
     ctx.strokeStyle = "#fff"
     ctx.arc(sub.x-c.x+screen.width/2+SUB_LENGTH/2,sub.y-c.y+screen.height/2+SUB_HEIHGT/2, 72, 0, Math.PI*2)
     ctx.closePath()
     ctx.stroke()
+    if(isShutdown) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)'
+        ctx.fillRect(0,0,screen.width,screen.height)
+    }
+    if(isDead) {
+        ctx.fillStyle = `rgba(0, 0, 0, ${fade/50}`
+        ctx.fillRect(0,0,screen.width,screen.height)
+         ctx.fillStyle="#fff"
+        ctx.textAlign='center'
+        ctx.font = '30px Arial'
+        ctx.fillText('All is lost', screen.width/2,screen.height/2,500)
+    }
+
+    
     ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>harpoon ${harpoon ? 'armed' : 'error'}<br>${chaarge<200?'▯ ▯ ▯':chaarge>400&&chaarge<600?'▮ ▮ ▯':chaarge>600?'▮ ▮ ▮': '▮ ▯ ▯'}`
 }
 
@@ -154,8 +184,6 @@ function drawUI() {
 function render() {
     drawBack()
     drawLevel()
-    ctx.fillStyle = "#00FFFF"
-    ctx.fillRect(screen.width/2, screen.height/2,8,8)
     drawPlayer()
     drawBubble()
 }
@@ -197,11 +225,10 @@ function liveBubble(rev) {
             if(b.save) 
                 b.pos.setVector(b.save)
             else 
-                b.pos = sub.clone().add(new v2d(Math.random()*5+(rev ? -96 : 96), Math.random()*5+20))
+                b.pos = sub.clone().add(new v2d(Math.random()*5+(rev ? 0 : SUB_LENGTH), Math.random()*5+20))
             b.size = 70
         } else {
             if(b.save) 
-                
                 b.pos.add(new v2d(b.dir==2?2:-2,0))
             else 
                 bubbles[i].pos.add(new v2d(Math.cos(time+b.pos.y), -1.5))
@@ -210,19 +237,22 @@ function liveBubble(rev) {
     }
 }
 
-sprt = [
-    0,0,64,32,//sub
-    64,128,32,32//harp
-]
 
 
 function gamo() {
     for(i=0;i<40;i++) {
         bubbles.push({pos : new v2d(sub.x-SUB_LENGTH+Math.random()*SUB_LENGTH*2, sub.y-SUB_HEIHGT+Math.random()*SUB_HEIHGT*2), size : 10*i % 70})    
     }
-    isShutdown=true
+    isDead=true
     
 }
+sprt = [
+    0,0,64,32,//sub
+    64,128,32,32,//harp
+    128,0,3,3,//dot
+    131,0,7,7,//cross
+    139,0,6,9   
+]
 
 function drawSprite(p, img, rev) {
     ctx["imageSmoothingEnabled"] = false
@@ -243,7 +273,7 @@ var futureDelta = new v2d(0,0)
 var moveOk = new v2d(0,0)
 function collide() {
     isC = false
-    if(speed.stance <= 0) return;
+    if(speed.norm() <= 0 || isDead) return;
     corners.ne.setPoint(sub.x+SUB_LENGTH, sub.y)
     corners.nw.setPoint(sub.x, sub.y)
     corners.se.setPoint(sub.x+SUB_LENGTH, sub.y+SUB_HEIHGT)
@@ -343,6 +373,7 @@ function testTrigger() {
 
 
 function initLevel(levelNumber) {
+    screenCenter = new v2d(screen.width/2,screen.height/2).add(new v2d(SUB_LENGTH/2,SUB_HEIHGT/2))
     homeD.style.display = 'none'
     levelsD.style.display = 'none'
     cancelAnimationFrame(frameHandler)

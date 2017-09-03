@@ -5,7 +5,7 @@ var frameHandler = null
 GAME_STATE_PAUSE = 0
 GAME_STATE_RUN = 1
 GAME_STATE_LEVEL = 2
-DEBUG = true
+DEBUG = false
 COLLIDE = true
 
 ctx = screen.getContext("2d")
