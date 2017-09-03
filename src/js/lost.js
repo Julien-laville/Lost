@@ -22,7 +22,7 @@ var i,j;
 var level= {};
 screenCenter=null
 boss = {
-    p : new v2d(0,0),
+    p : new v2d(200,200),
     seq : 0,
     hp : 10
 }
@@ -129,11 +129,11 @@ function liveProjectile() {
 }
 
 function liveHostile() {
-
+    boss.p.add(sub.clone().sub(boss.p).normalize().scale(0.5))
 }
 
 function drawHostile() {
-    drawAbSprite(boss.p,3)
+    drawSprite(boss.p,5)
 
 }
 
@@ -172,7 +172,7 @@ function drawWeapon() {
     }
 }
 
-c=''
+bstr=''
 function drawUI() {
     ctx.beginPath()
     ctx.strokeStyle = "#fff"
@@ -191,14 +191,14 @@ function drawUI() {
         ctx.font = '30px Arial'
         ctx.fillText('All is lost', screen.width/2,screen.height/2,500)
     }
-    c=''
+    bstr=''
     for(i=0;i<10;i++) {
-        c+= boss.hp>i?' ▮': ' ▯'
+        bstr+= boss.hp>i?' ▮': ' ▯'
     }
 
 
     
-    ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>harpoon ${harpoon ? 'armed' : 'error'}<br>${chaarge<200?'▯ ▯ ▯':chaarge>400&&chaarge<600?'▮ ▮ ▯':chaarge>600?'▮ ▮ ▮': '▮ ▯ ▯'}<div id="boss">${c}</div>`
+    ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>harpoon ${harpoon ? 'armed' : 'error'}<br>${chaarge<200?'▯ ▯ ▯':chaarge>400&&chaarge<600?'▮ ▮ ▯':chaarge>600?'▮ ▮ ▮': '▮ ▯ ▯'}<div id="boss">${bstr}</div>`
 }
 
 
@@ -206,8 +206,8 @@ function render() {
     drawBack()
     drawLevel()
     drawPlayer()
-    drawBubble()
     drawHostile()
+    drawBubble()
 }
 
 function drawBack() {
@@ -273,13 +273,13 @@ sprt = [
     64,128,32,32,//harp
     128,0,3,3,//dot
     131,0,7,7,//cross
-    139,0,6,9   
+    139,0,6,9,//cur
+    160,5,82,53//boss
 ]
 
 function drawSprite(p, img, rev) {
     ctx["imageSmoothingEnabled"] = false
-    ctx.drawImage(sprite, sprt[img*4]+rev?sprt[img*4+2]:0, sprt[img*4+1], sprt[img*4+2], sprt[img*4+3], p.x-c.x+screen.width/2, p.y-c.y+screen.height/2, sprt[img*4+2]*2, sprt[img*4+3]*2)
-   // ctx["imageSmoothingEnabled"] = true
+    ctx.drawImage(sprite, sprt[img*4]+(rev?sprt[img*4+2]:0), sprt[img*4+1], sprt[img*4+2], sprt[img*4+3], p.x-c.x+screen.width/2, p.y-c.y+screen.height/2, sprt[img*4+2]*2, sprt[img*4+3]*2)
 }
 
 function drawAbSprite(p, img) {
