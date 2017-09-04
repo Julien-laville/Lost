@@ -66,7 +66,6 @@ function step(delta) {
     
     if(COLLIDE) collide()
     drawWeapon()
-    showDialog()
     drawUI()
     
 }
@@ -202,8 +201,10 @@ function drawUI() {
         ctx.fillText('All is lost', screen.width/2,screen.height/2,500)
     }
     bstr=''
-    for(i=0;i<10;i++) {
-        bstr+= boss.hp>i?' ▮': ' ▯'
+    if(boss.hp>1 ){
+        for(i=0;i<10;i++) {
+            bstr+= boss.hp>i?' ▮': ' ▯'
+        }
     }
 
 
@@ -373,23 +374,12 @@ function collide() {
     sub.add(moveOk)
 }
 
-var dialog;
-function showDialog() {
-    if(level.layers[2]) {
-        for(i = 0; i < level.layers[2].objects.length; i ++) {
-            dialog = level.layers[2].objects[i]
-            if(sub.x > dialog.x*2 && sub.x < dialog.x*2 + dialog.width*2 && sub.y > dialog.y*2 && sub.y < dialog.y*2 + dialog.height*2) {
-                dialogd.innerHTML = dialog.properties.ct
-            }
-        }
-    }
-}
+
 
 var trigger;
 function testTrigger() {
-    if(level.layers[3]) {
-         for(i = 0; i < level.layers[3].objects.length; i ++) {
-            trigger = level.layers[3].objects[i]
+         for(i = 0; i < level.triggers.length; i ++) {
+            trigger = level.triggers[i]
             if(sub.x > trigger.x*2 && sub.x < trigger.x*2 + trigger.width*2 && sub.y > trigger.y*2 && sub.y < trigger.y*2 + trigger.height*2) {
                 if(trigger.type === 'shutdown') {
                     isShutdown = true
@@ -397,18 +387,24 @@ function testTrigger() {
                 if(trigger.type === 'start') {
                     isShutdown = false
                 }
+                if(trigger.type === 'dialog') {
+                    dialogd.innerHTML = trigger.properties.ct
+                }
                 if(trigger.type === 'powup') {
                     if(trigger.properties.i === 1) {
                         harpoon = 1
                         dialog.innerHTML = 'Harpoon aquiererd'
                     } 
                 }
+                if(trigger.type === 'end') {
+                   initLevel(trigger.properties.next)
+                }
                 if(trigger.type === 'stream') {
                     if(trigger.properties.dir === 1) {
                         speed.sub(new v2d(30,10))
                     }
                 }
-            }
+
         }
     }
 }
@@ -419,24 +415,27 @@ function initLevel(levelNumber) {
     homeD.style.display = 'none'
     levelsD.style.display = 'none'
     cancelAnimationFrame(frameHandler)
-    LEVEL_WIDTH = TileMaps[levelNumber].width
-    LEVEL_HEIGHT= TileMaps[levelNumber].height
-    sub.setPoint(311,100)
-    level.tiles = TileMaps[levelNumber].layers[0].data
-    level.layers = TileMaps[levelNumber].layers
+    level = TileMaps[levelNumber]
+    level.triggers = level.layers[2].objects
+    level.tiles = level.layers[0].data
+    LEVEL_WIDTH = level.width
+    LEVEL_HEIGHT= level.height
     gameState = GAME_STATE_RUN
     
     for(i = 0; i < 10; i ++) {
         bubbles.push({pos : new v2d(0,0), size : 10*i % 70})
     }
     
-    for(i = 0; i < TileMaps.level3.layers[3].objects.length; i ++) {    
-        var obj = TileMaps.level3.layers[3].objects[i]
+    for(i = 0; i < level.triggers.length; i ++) {
+        var obj = level.triggers[i]
         if(obj.type === 'stream') {
             for(i = 0; i < 30; i ++) {
                 var p = new v2d(2*obj.x+2*Math.random()*obj.width,2*obj.y+2*Math.random()*obj.height)
                 bubbles.push({pos : p, save : p.clone(), size : 10*i % 70, dir : obj.properties.dir})
             }
+        }
+        if(obj.type === 'start') {
+            sub.setPoint(obj.x*2, obj.y*2)
         }
     }
     
@@ -444,8 +443,8 @@ function initLevel(levelNumber) {
 }
 
 function drawPowUp() {
-    for(i = 0; i < TileMaps.level3.layers[3].objects.length; i ++) {
-        powup = TileMaps.level3.layers[3].objects[i]
+    for(i = 0; i <  level.triggers.length; i ++) {
+        powup =  level.triggers[i]
         if(powup.type === 'powup') {
             if(powup.properties.i == 1) {   
                 drawSprite(new v2d().setVector(powup).scale(2), 1) 
