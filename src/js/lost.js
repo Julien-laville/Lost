@@ -12,16 +12,17 @@ SCREEN_HEIGHT = 20;
 
 //sub carac
 isShutdown = false
-harpoon = 1
+harpoon = 0
 arming = 0
 chaarge = 0
 isDead = false
 fade=0
 var bubbles = []
-var i,j;
+var i,j,k;
 var level= {};
 screenCenter=null
 boss = {
+    active:false,
     p : new v2d(200,200),
     seq : 0,
     hp : 10
@@ -126,7 +127,7 @@ function liveProjectile() {
     for(i=0;i < arrows.length;i++) {
         if(arrows[i].isAlive===true) {
             arrows[i].add(arrows[i].dir.normalize().scale(8))
-            if(boss.p.stance(arrows[i]) < 30) {
+            if(arrows[i].x>boss.p.x&&arrows[i].y>boss.p.y&&arrows[i].x<boss.p.x+160&&arrows[i].y<boss.p.y+100) {
                 boss.hp--;
                 arrows[i].isAlive = false
             }
@@ -135,14 +136,16 @@ function liveProjectile() {
 }
 
 function liveHostile() {
-    if(boss.hp>0)
-        boss.p.add(sub.clone().sub(boss.p).normalize().scale(0.5))
-    else
-        boss.p.add(new v2d(0,1))
+    if(boss.active) {
+        if(boss.hp>0)
+            boss.p.add(sub.clone().sub(boss.p).normalize().scale(0.5))
+        else
+            boss.p.add(new v2d(0,1))
+    }
 }
 
 function drawHostile() {
-    drawSprite(boss.p,5)
+    if(boss.active) drawSprite(boss.p,5)
 
 }
 
@@ -201,7 +204,7 @@ function drawUI() {
         ctx.fillText('All is lost', screen.width/2,screen.height/2,500)
     }
     bstr=''
-    if(boss.hp>1 ){
+    if(boss.active){
         for(i=0;i<10;i++) {
             bstr+= boss.hp>i?' ▮': ' ▯'
         }
@@ -209,7 +212,7 @@ function drawUI() {
 
 
     
-    ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>harpoon ${harpoon ? 'armed' : 'error'}<br>${chaarge<200?'▯ ▯ ▯':chaarge>400&&chaarge<600?'▮ ▮ ▯':chaarge>600?'▮ ▮ ▮': '▮ ▯ ▯'}<div id="boss">${bstr}</div>`
+    ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>${harpoon ? 'Harpoon armed' : 'Module available'}<br><div id="boss">${bstr}</div>`
 }
 
 
@@ -295,6 +298,12 @@ sprt = [
 
 function drawSprite(p, img, rev) {
     ctx["imageSmoothingEnabled"] = false
+    
+    ctx.beginPath()
+    ctx.rect(p.x-c.x+screen.width/2,p.y-c.y+screen.height/2,sprt[img*4+2]*2, sprt[img*4+3]*2)
+    ctx.strokeStyle = "#ff0"
+    ctx.stroke()
+    
     ctx.drawImage(sprite, sprt[img*4]+(rev?sprt[img*4+2]:0), sprt[img*4+1], sprt[img*4+2], sprt[img*4+3], p.x-c.x+screen.width/2, p.y-c.y+screen.height/2, sprt[img*4+2]*2, sprt[img*4+3]*2)
 }
 
@@ -393,7 +402,8 @@ function testTrigger() {
                 if(trigger.type === 'powup') {
                     if(trigger.properties.i === 1) {
                         harpoon = 1
-                        dialog.innerHTML = 'Harpoon aquiererd'
+                        trigger.properties.a=0
+                        dialogd.innerHTML = 'Harpoon aquiererd'
                     } 
                 }
                 if(trigger.type === 'end') {
@@ -401,7 +411,9 @@ function testTrigger() {
                 }
                 if(trigger.type === 'stream') {
                     if(trigger.properties.dir === 1) {
-                        speed.sub(new v2d(30,10))
+                        speed.add(new v2d(1,0))
+                    } else if(trigger.properties.dir === 4) {
+                        speed.add(new v2d(-1,0))
                     }
                 }
 
@@ -410,7 +422,7 @@ function testTrigger() {
 }
 
 
-function initLevel(levelNumber) {
+function initLevel(levelNumber, isNext) {
     screenCenter = new v2d(screen.width/2,screen.height/2).add(new v2d(SUB_LENGTH/2,SUB_HEIHGT/2))
     homeD.style.display = 'none'
     levelsD.style.display = 'none'
@@ -426,16 +438,20 @@ function initLevel(levelNumber) {
         bubbles.push({pos : new v2d(0,0), size : 10*i % 70})
     }
     
-    for(i = 0; i < level.triggers.length; i ++) {
-        var obj = level.triggers[i]
+    for(j = 0; j < level.triggers.length; j ++) {
+        var obj = level.triggers[j]
         if(obj.type === 'stream') {
-            for(i = 0; i < 30; i ++) {
+            for(k = 0; k < 30;k ++) {
                 var p = new v2d(2*obj.x+2*Math.random()*obj.width,2*obj.y+2*Math.random()*obj.height)
-                bubbles.push({pos : p, save : p.clone(), size : 10*i % 70, dir : obj.properties.dir})
+                bubbles.push({pos : p, save : p.clone(), size : 10*k % 70, dir : obj.properties.dir})
             }
         }
         if(obj.type === 'start') {
             sub.setPoint(obj.x*2, obj.y*2)
+        }
+        if(obj.type === 'boss') {
+            boss.active=true
+            boss.p.setPoint(obj.x, obj.y)
         }
     }
     
@@ -446,8 +462,8 @@ function drawPowUp() {
     for(i = 0; i <  level.triggers.length; i ++) {
         powup =  level.triggers[i]
         if(powup.type === 'powup') {
-            if(powup.properties.i == 1) {   
-                drawSprite(new v2d().setVector(powup).scale(2), 1) 
+            if(powup.properties.i == 1 && powup.properties.a) {   
+                drawSprite(new v2d().setVector(powup).scale(2), 0) 
             }
         }
     }
