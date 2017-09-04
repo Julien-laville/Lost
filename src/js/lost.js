@@ -91,7 +91,7 @@ arrows = []
 arrow = null
 freeArrow = null
 var arpoonO = new v2d(0,0)
-var arpoonDelta = new v2d(60,64)
+var arpoonDelta = new v2d(56,64)
 var visor = new v2d(0,0)
 function fire() {
     if(chaarge < 300) {
@@ -107,6 +107,7 @@ function fire() {
             arrows[i].setVector(sub).add(arpoonDelta)
             arrows[i].dir = visor.clone()
             arrows[i].isAlive=true
+            arrows[i].chaarge=chaarge
             freeArrow = true
         } 
     }
@@ -116,6 +117,7 @@ function fire() {
         arrow.setVector(sub).add(arpoonDelta)
         arrow.isAlive=true
         arrow.dir = visor.clone()
+        arrows.chaarge=chaarge
         arrows.push(arrow) 
     }       
     chaarge = 0
@@ -123,13 +125,21 @@ function fire() {
 
 function liveProjectile() {
     for(i=0;i < arrows.length;i++) {
-        if(arrows[i].isAlive)
+        if(arrows[i].isAlive===true) {
             arrows[i].add(arrows[i].dir.normalize().scale(8))
+            if(boss.p.stance(arrows[i]) < 30) {
+                boss.hp--;
+                arrows[i].isAlive = false
+            }
+        }
     }
 }
 
 function liveHostile() {
-    boss.p.add(sub.clone().sub(boss.p).normalize().scale(0.5))
+    if(boss.hp>0)
+        boss.p.add(sub.clone().sub(boss.p).normalize().scale(0.5))
+    else
+        boss.p.add(new v2d(0,1))
 }
 
 function drawHostile() {
@@ -142,7 +152,7 @@ function drawWeapon() {
         if(arrows[i].isAlive) {
             ctx.beginPath()
             ctx.arc(arrows[i].x-c.x+screen.width/2,arrows[i].y-c.y+screen.height/2,3,0,2*Math.PI)
-            ctx.fillStyle="#444"
+            ctx.fillStyle="#4ac495"
             ctx.fill()
         }
     }
@@ -212,8 +222,8 @@ function render() {
 
 function drawBack() {
     var grd=ctx.createLinearGradient(0,0,0,screen.height);
-    grd.addColorStop(0,"#3cb9fe");
-    grd.addColorStop(1,"#3b4158");
+    grd.addColorStop(0,"#1b212c");
+    grd.addColorStop(1,"#0a0e15");
     ctx.fillStyle = grd
     ctx.fillRect(0,0,10000,100000)
 }
@@ -224,7 +234,11 @@ function drawPlayer() {
         ctx.strokeStyle = "#edff00"
         ctx.stroke()
     }
-    drawSprite(sub, 0, acc.x > 0)
+    if(harpoon) {
+        drawSprite(sub,6, acc.x > 0)
+    } else {
+        drawSprite(sub, 0, acc.x > 0)
+    }
 }
 
 
@@ -274,7 +288,8 @@ sprt = [
     128,0,3,3,//dot
     131,0,7,7,//cross
     139,0,6,9,//cur
-    160,5,82,53//boss
+    160,5,82,53,//boss
+    0,0,64,40,//sub-cannon
 ]
 
 function drawSprite(p, img, rev) {
