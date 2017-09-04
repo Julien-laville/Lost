@@ -20,6 +20,7 @@ fade=0
 var bubbles = []
 var i,j,k;
 var level= {};
+var accMod = new v2d(0,0)
 screenCenter=null
 boss = {
     active:false,
@@ -325,6 +326,7 @@ var futureDelta = new v2d(0,0)
 var moveOk = new v2d(0,0)
 function collide() {
     isC = false
+    sub.add(accMod)
     if(speed.norm() <= 0 || isDead) return;
     corners.ne.setPoint(sub.x+SUB_LENGTH, sub.y)
     corners.nw.setPoint(sub.x, sub.y)
@@ -387,6 +389,7 @@ function collide() {
 
 var trigger;
 function testTrigger() {
+        accMod.setPoint(0,0)
          for(i = 0; i < level.triggers.length; i ++) {
             trigger = level.triggers[i]
             if(sub.x > trigger.x*2 && sub.x < trigger.x*2 + trigger.width*2 && sub.y > trigger.y*2 && sub.y < trigger.y*2 + trigger.height*2) {
@@ -404,6 +407,7 @@ function testTrigger() {
                         harpoon = 1
                         trigger.properties.a=0
                         dialogd.innerHTML = 'Harpoon aquiererd'
+                        ccd('click to fire, keep button down to charge')
                     } 
                 }
                 if(trigger.type === 'end') {
@@ -411,16 +415,22 @@ function testTrigger() {
                 }
                 if(trigger.type === 'stream') {
                     if(trigger.properties.dir === 1) {
-                        speed.add(new v2d(1,0))
+                        accMod.setPoint(4,0)
                     } else if(trigger.properties.dir === 4) {
-                        speed.add(new v2d(-1,0))
-                    }
+                        accMod.setPoint(-4,0)
+                    } 
                 }
 
         }
     }
 }
 
+function ccd(m) {
+    cc.innerHTML=m
+    setTimeout(()=>{
+        cc.innerHTML=''
+    },4000)
+}
 
 function initLevel(levelNumber, isNext) {
     screenCenter = new v2d(screen.width/2,screen.height/2).add(new v2d(SUB_LENGTH/2,SUB_HEIHGT/2))
