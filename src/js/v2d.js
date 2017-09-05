@@ -41,10 +41,16 @@ function v2d(x,y) {
         this.x=this.x*o.x;
         this.y=this.y*o.y;
     }
+    
     v2d.prototype.normalize = function() {
         this.tmp = this.x;
         this.x  = this.x / Math.hypot(this.x,this.y)
         this.y = this.y / Math.hypot(this.tmp,this.y)
+        return this;
+    }
+    v2d.prototype.addP = function(x,y) {
+        this.x=this.x+x;
+        this.y=this.y+y;
         return this;
     }
     v2d.prototype.add = function(o){

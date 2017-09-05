@@ -139,9 +139,13 @@ function liveProjectile() {
 function liveHostile() {
     if(boss.active) {
         if(boss.hp>0)
-            boss.p.add(sub.clone().sub(boss.p).normalize().scale(0.5))
+            boss.p.add(sub.clone().addP(64,32).sub(boss.p.clone().addP(80,50)).normalize().scale(0.5))
         else
             boss.p.add(new v2d(0,1))
+        
+        if(sub.clone().addP(64,32).stance(boss.p.clone().addP(80,50)) < 110) {
+            isDead=true
+        }
     }
 }
 
@@ -299,11 +303,12 @@ sprt = [
 
 function drawSprite(p, img, rev) {
     ctx["imageSmoothingEnabled"] = false
-    
-    ctx.beginPath()
-    ctx.rect(p.x-c.x+screen.width/2,p.y-c.y+screen.height/2,sprt[img*4+2]*2, sprt[img*4+3]*2)
-    ctx.strokeStyle = "#ff0"
-    ctx.stroke()
+    if(DEBUG) {
+        ctx.beginPath()
+        ctx.rect(p.x-c.x+screen.width/2,p.y-c.y+screen.height/2,sprt[img*4+2]*2, sprt[img*4+3]*2)
+        ctx.strokeStyle = "#ff0"
+        ctx.stroke()
+    }
     
     ctx.drawImage(sprite, sprt[img*4]+(rev?sprt[img*4+2]:0), sprt[img*4+1], sprt[img*4+2], sprt[img*4+3], p.x-c.x+screen.width/2, p.y-c.y+screen.height/2, sprt[img*4+2]*2, sprt[img*4+3]*2)
 }
