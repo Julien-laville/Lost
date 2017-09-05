@@ -22,6 +22,7 @@ var i,j,k;
 var level= {};
 var accMod = new v2d(0,0)
 screenCenter=null
+canStart=false
 boss = {
     active:false,
     p : new v2d(200,200),
@@ -206,17 +207,27 @@ function drawUI() {
          ctx.fillStyle="#fff"
         ctx.textAlign='center'
         ctx.font = '30px Arial'
-        ctx.fillText('All is lost', screen.width/2,screen.height/2,500)
+        ctx.fillText('You swim in the deep for ever', screen.width/2,screen.height/2,500)
     }
     bstr=''
     if(boss.active){
+        bstr += 'Boss HP : '
         for(i=0;i<10;i++) {
             bstr+= boss.hp>i?' ▮': ' ▯'
         }
     }
 
 
-    
+        grd = ctx.createRadialGradient(screen.width/2, screen.height/2, 0.000, screen.width/2, screen.height/2, screen.width/2);
+      
+      // Add colors
+      grd.addColorStop(0.004, 'rgba(0, 0, 0, 0.000)');
+      grd.addColorStop(0.718, 'rgba(0, 0, 0, 0.000)');
+      grd.addColorStop(1.000, 'rgba(0, 0, 0, 1.000)');
+      
+      // Fill with gradient
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, screen.width, screen.height)
     ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>${harpoon ? 'Harpoon armed' : 'Module available'}<br><div id="boss">${bstr}</div>`
 }
 
@@ -442,6 +453,7 @@ function initLevel(levelNumber, isNext) {
     homeD.style.display = 'none'
     levelsD.style.display = 'none'
     cancelAnimationFrame(frameHandler)
+    ctx.filter = "blur(50px)";
     level = TileMaps[levelNumber]
     level.triggers = level.layers[2].objects
     level.tiles = level.layers[0].data
@@ -449,6 +461,9 @@ function initLevel(levelNumber, isNext) {
     LEVEL_HEIGHT= level.height
     gameState = GAME_STATE_RUN
     
+    splash.className='splayed'
+    splash.innerHTML=level.properties.splash+'<span>press F to start</span>'
+    bubbles = []
     for(i = 0; i < 10; i ++) {
         bubbles.push({pos : new v2d(0,0), size : 10*i % 70})
     }
@@ -470,7 +485,7 @@ function initLevel(levelNumber, isNext) {
         }
     }
     
-    loop()
+    canStart=true;
 }
 
 function drawPowUp() {

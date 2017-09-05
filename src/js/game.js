@@ -20,10 +20,11 @@ function loop() {
 	ips = 1000 / delta
 	info.innerHTML = ips > 50 ? ips.toFixed(3) : '<span style="color:red">'+ips.toFixed(3)+'</span>'
 
-
+    ctx.filter = "none";
 
 
 	/* game loop */
+	frameHandler = requestAnimationFrame(loop)
 
 
         step(delta)
@@ -33,20 +34,19 @@ function loop() {
 
 
 
-	frameHandler = requestAnimationFrame(loop)
 	time = performance.now()
 }
 
 gameState = GAME_STATE_LEVEL
 
 window.onkeypress =function(e) {
-	if(e.keyCode === 32) {
+    touche = e.keyCode || e.charCode
+	if(touche === 32) {
 		if(gameState===GAME_STATE_RUN) {
 			//pause
 			cancelAnimationFrame(frameHandler)
 			gameState = GAME_STATE_PAUSE
 			pauseScreen.style.display = 'block'
-			homeD.style.display = 'block'
             levelsD.style.display = 'none'
             menu.style.display = 'none'
             screen.width += 0
@@ -54,13 +54,15 @@ window.onkeypress =function(e) {
 			//run
 			loop()
 			gameState = GAME_STATE_RUN
-			homeD.style.display = 'none'
 			pauseScreen.style.display = 'none'
 		}
-	} else if(e.keyCode === 97) {
+	} else if(touche === 97) {
         SPEED = 0
-    } else if(e.keyCode === 122) {
+    } else if(touche === 122) {
         SPEED = 1
+    } else if(canStart && touche===102){
+        splash.className = ''
+        setTimeout(loop, 500)
     }
 }
 
@@ -74,6 +76,7 @@ window.onmousemove = function(e) {
 // menu 
 
 function home() {
+    homeD.style.display = 'block'
     menu.style.display = 'block'
     levelsD.style.display = 'none';
     pauseScreen.style.display = 'none'

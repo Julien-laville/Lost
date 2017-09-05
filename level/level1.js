@@ -34,7 +34,6 @@
         }, 
         {
          "draworder":"topdown",
-         "height":32,
          "name":"Calque d'objets 1",
          "objects":[
                 {
@@ -70,13 +69,21 @@
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
-         "width":32,
          "x":0,
          "y":0
         }],
  "nextobjectid":5,
  "orientation":"orthogonal",
+ "properties":
+    {
+     "splash":"You have to find the mother of seeds"
+    },
+ "propertytypes":
+    {
+     "splash":"string"
+    },
  "renderorder":"left-up",
+ "tiledversion":"1.0.2",
  "tileheight":32,
  "tilesets":[
         {
@@ -84,6 +91,7 @@
          "source":"sans-titre.tsx"
         }],
  "tilewidth":32,
+ "type":"map",
  "version":1,
  "width":32
 });

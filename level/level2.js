@@ -74,6 +74,14 @@
         }],
  "nextobjectid":4,
  "orientation":"orthogonal",
+ "properties":
+    {
+     "splash":"123"
+    },
+ "propertytypes":
+    {
+     "splash":"string"
+    },
  "renderorder":"left-up",
  "tiledversion":"1.0.2",
  "tileheight":32,
