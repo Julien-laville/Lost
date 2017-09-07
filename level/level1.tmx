@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-up" width="32" height="32" tilewidth="32" tileheight="32" nextobjectid="5">
  <properties>
+  <property name="Title" value="The signal"/>
   <property name="splash" value="You have to find the mother of seeds"/>
  </properties>
  <tileset firstgid="1" source="sans-titre.tsx"/>

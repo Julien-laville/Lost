@@ -29,8 +29,12 @@ boss = {
     seq : 0,
     hp : 10
 }
-
-
+artefact = {
+    active:false
+}
+timer = {
+    active:false
+}
 
 var acc = new v2d(0,0)
 function step(delta) {
@@ -151,8 +155,24 @@ function liveHostile() {
 }
 
 function drawHostile() {
-    if(boss.active) drawSprite(boss.p,5)
+    if(boss.active) {
+        drawSprite(boss.p,5)
+        
+        grd = ctx.createRadialGradient(boss.p.x-c.x+screen.width/2,boss.p.y-c.y+screen.height/2,0,boss.p.x-c.x+screen.width/2,boss.p.y-c.y+screen.height/2,30);
 
+        // Add colors
+        grd.addColorStop(0, 'rgba(255, 171, 26, 1)');
+        grd.addColorStop(0.4, 'rgba(255, 171, 26, 0.77)');
+        grd.addColorStop(0.43, 'rgba(255, 171, 26, 0.13)');
+        grd.addColorStop(1.000, 'rgba(255, 171, 26, 0)');
+        
+
+        // Fill with gradient
+        ctx.beginPath()
+        ctx.arc(boss.p.x-c.x+screen.width/2,boss.p.y-c.y+screen.height/2,30,0,2*Math.PI)
+        ctx.fillStyle = grd;
+        ctx.fill()
+    }
 }
 
 function drawWeapon() {
@@ -207,28 +227,38 @@ function drawUI() {
          ctx.fillStyle="#fff"
         ctx.textAlign='center'
         ctx.font = '30px Arial'
-        ctx.fillText('You swim in the deep for ever', screen.width/2,screen.height/2,500)
+        ctx.fillText('You swim in the deep forever', screen.width/2,screen.height/2,500)
     }
-    bstr=''
+    cData=''
+    cClass=''
     if(boss.active){
-        bstr += 'Boss HP : '
+        cData += 'Boss HP : '
         for(i=0;i<10;i++) {
-            bstr+= boss.hp>i?' ▮': ' ▯'
+            cData+= boss.hp>i?' ▮': ' ▯'
         }
+        cCLass="boss"
+    } else if(timer.active) {
+        cData = 'Time remaining : ' 
+        timer.remaining-=delta
+        for(i=0;i<10;i++) {
+            cData+= (timer.remaining / timer.initial * 10 > i) ? ' ▮': ' ▯'
+        }
+        cClass="time"
     }
+    
 
 
-        grd = ctx.createRadialGradient(screen.width/2, screen.height/2, 0.000, screen.width/2, screen.height/2, screen.width/2);
-      
-      // Add colors
-      grd.addColorStop(0.004, 'rgba(0, 0, 0, 0.000)');
-      grd.addColorStop(0.718, 'rgba(0, 0, 0, 0.000)');
-      grd.addColorStop(1.000, 'rgba(0, 0, 0, 1.000)');
-      
-      // Fill with gradient
-      ctx.fillStyle = grd;
-      ctx.fillRect(0, 0, screen.width, screen.height)
-    ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>${harpoon ? 'Harpoon armed' : 'Module available'}<br><div id="boss">${bstr}</div>`
+    grd = ctx.createRadialGradient(screen.width/2, screen.height/2, 0.000, screen.width/2, screen.height/2, screen.width/2);
+
+    // Add colors
+    grd.addColorStop(0, 'rgba(0, 0, 0, 0.000)');
+    grd.addColorStop(0.718, 'rgba(0, 0, 0, 0.000)');
+    grd.addColorStop(1.000, 'rgba(0, 0, 0, 1.000)');
+
+    // Fill with gradient
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, screen.width, screen.height)
+    ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>${harpoon ? 'Harpoon armed' : 'Module available'}<br><div class="contextBar ${cClass}">${cData}</div>`
 }
 
 
@@ -310,6 +340,8 @@ sprt = [
     139,0,6,9,//cur
     160,5,82,53,//boss
     0,0,64,40,//sub-cannon
+    192,64,18,30//artefact
+    
 ]
 
 function drawSprite(p, img, rev) {
@@ -406,6 +438,10 @@ function collide() {
 var trigger;
 function testTrigger() {
         accMod.setPoint(0,0)
+    
+        if(timer.active && timer.remaining < 0) {
+            isDead = true
+        }
          for(i = 0; i < level.triggers.length; i ++) {
             trigger = level.triggers[i]
             if(sub.x > trigger.x*2 && sub.x < trigger.x*2 + trigger.width*2 && sub.y > trigger.y*2 && sub.y < trigger.y*2 + trigger.height*2) {
@@ -481,7 +517,19 @@ function initLevel(levelNumber, isNext) {
         }
         if(obj.type === 'boss') {
             boss.active=true
-            boss.p.setPoint(obj.x, obj.y)
+            boss.p = new v2d(obj.x*2, obj.y*2)
+        }
+        if(obj.type === 'artefact') {
+            artefact.active=true
+            artefact.p = new v2d(obj.x*2, obj.y*2)
+        }
+    }
+    timer={active:false}
+    if(level.properties.time) {
+        timer = {
+            initial:level.properties.time*1000,
+            remaining:level.properties.time*1000,
+            active:true
         }
     }
     
@@ -489,6 +537,23 @@ function initLevel(levelNumber, isNext) {
 }
 
 function drawPowUp() {
+    if(artefact.active) {
+        drawSprite(artefact.p,7)
+        
+        grd = ctx.createRadialGradient(artefact.p.x-c.x+screen.width/2,artefact.p.y-c.y+screen.height/2,0,artefact.p.x-c.x+screen.width/2,artefact.p.y-c.y+screen.height/2,50);
+
+        // Add colors
+        grd.addColorStop(0, 'rgba(137, 255, 243, 1)');
+        grd.addColorStop(0.4, 'rgba(137, 255, 243, 0.77)');
+        grd.addColorStop(0.43, 'rgba(137, 255, 243, 0.13)');
+        grd.addColorStop(1.000, 'rgba(137, 255, 243, 0)');
+
+        // Fill with gradient
+        ctx.beginPath()
+        ctx.arc(artefact.p.x-c.x+screen.width/2,artefact.p.y-c.y+screen.height/2,50,0,2*Math.PI)
+        ctx.fillStyle = grd;
+        ctx.fill()
+    }
     for(i = 0; i <  level.triggers.length; i ++) {
         powup =  level.triggers[i]
         if(powup.type === 'powup') {

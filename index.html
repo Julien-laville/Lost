@@ -65,18 +65,24 @@
         display: block;
         font-size: 26px
     }
-    #boss {
-        color:darkred;
+    .contextBar {
         top: 0;
         position: absolute;
         width: 100vw;
         text-align: center;
+    }
+    .boss {
+        color:darkred;
+    }
+    .time {
+        color:#fff;
     }
     #ui {
         position: absolute;
         color:aliceblue;
     }
     #dialogd {
+        padding: 10px;
         font-size: 18px;
         background: rgba(0,0,0,.5);
         color :coral;
@@ -103,7 +109,7 @@
 <canvas id="screen"></canvas>
 <div id=ui></div>
 <div id="info"></div>
-<div id="dialogd">dialog</div>
+<div id="dialogd"></div>
 <div id="homeD">
     <div id="homeImg"></div> 
     <div id="menu">
