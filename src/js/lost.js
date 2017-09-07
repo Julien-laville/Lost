@@ -135,6 +135,9 @@ function liveProjectile() {
             arrows[i].add(arrows[i].dir.normalize().scale(8))
             if(arrows[i].x>boss.p.x&&arrows[i].y>boss.p.y&&arrows[i].x<boss.p.x+160&&arrows[i].y<boss.p.y+100) {
                 boss.hp--;
+                if(boss.hp < 1) {
+                    boss.d = boss.p.clone() 
+                }
                 arrows[i].isAlive = false
             }
         }
@@ -153,13 +156,17 @@ function liveHostile() {
         }
     }
 }
-
+var ballPos = new v2d()
 function drawHostile() {
     if(boss.active) {
         drawSprite(boss.p,5)
+        if(boss.d) {
+            ballPos.setVector(boss.d)
+        } else {
+            ballPos.setVector(boss.p)
+        }
+        grd = ctx.createRadialGradient(ballPos.x-c.x+screen.width/2,ballPos.y-c.y+screen.height/2,0,ballPos.x-c.x+screen.width/2,ballPos.y-c.y+screen.height/2,30);
         
-        grd = ctx.createRadialGradient(boss.p.x-c.x+screen.width/2,boss.p.y-c.y+screen.height/2,0,boss.p.x-c.x+screen.width/2,boss.p.y-c.y+screen.height/2,30);
-
         // Add colors
         grd.addColorStop(0, 'rgba(255, 171, 26, 1)');
         grd.addColorStop(0.4, 'rgba(255, 171, 26, 0.77)');
@@ -169,10 +176,10 @@ function drawHostile() {
 
         // Fill with gradient
         ctx.beginPath()
-        ctx.arc(boss.p.x-c.x+screen.width/2,boss.p.y-c.y+screen.height/2,30,0,2*Math.PI)
+        ctx.arc(ballPos.x-c.x+screen.width/2,ballPos.y-c.y+screen.height/2,30,0,2*Math.PI)
         ctx.fillStyle = grd;
         ctx.fill()
-    }
+    } 
 }
 
 function drawWeapon() {
@@ -442,6 +449,16 @@ function testTrigger() {
         if(timer.active && timer.remaining < 0) {
             isDead = true
         }
+    
+        if(boss.d) {
+            if(boss.d.stance(sub) < 50) {
+                splash.className='splayed'
+                splash.innerHTML='<h2>- The end -</h2>You get the warden key, it show you a way home, maybe another aventure'
+                cancelAnimationFrame(frameHandler)
+                ctx.filter = "blur(50px)";
+            }
+        }
+    
          for(i = 0; i < level.triggers.length; i ++) {
             trigger = level.triggers[i]
             if(sub.x > trigger.x*2 && sub.x < trigger.x*2 + trigger.width*2 && sub.y > trigger.y*2 && sub.y < trigger.y*2 + trigger.height*2) {
