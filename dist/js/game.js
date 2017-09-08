@@ -7,8 +7,7 @@ GAME_STATE_RUN = 1
 GAME_STATE_LEVEL = 2
 DEBUG = false
 COLLIDE = true
-MOUSECTRL = true
-
+MOUSECTRL = false
 ctx = screen.getContext("2d")
 var m = new v2d(1,1)
 
@@ -39,7 +38,30 @@ function loop() {
 }
 
 gameState = GAME_STATE_LEVEL
-a = z = e = q = s = d = 0
+
+up = left = right = down = 0
+window.onkeydown = function(e) {
+    if(e.keyCode === 87 || e.keyCode === 90)
+        up = 1
+    if(e.keyCode === 65 || e.keyCode === 81)
+        left = 1
+    if(e.keyCode === 83) 
+        down = 1
+    if(e.keyCode === 68)
+        right = 1
+}
+window.onkeyup = function(e) {
+    if(e.keyCode === 87 || e.keyCode === 90)
+        up = 0
+    if(e.keyCode === 65 || e.keyCode === 81)
+        left = 0
+    if(e.keyCode === 83) 
+        down = 0
+    if(e.keyCode === 68)
+        right = 0
+}
+
+
 window.onkeypress =function(e) {
     touche = e.keyCode || e.charCode
 	if(touche === 32) {
@@ -57,14 +79,16 @@ window.onkeypress =function(e) {
 			gameState = GAME_STATE_RUN
 			pauseScreen.style.display = 'none'
 		}
-	} else if(touche === 97) {
-        SPEED = 0
-    } else if(touche === 122) {
-        SPEED = 1
     } else if(canStart && touche===102){
         splash.className = ''
         setTimeout(loop, 500)
     }
+}
+
+window.onwheel = function(e) {
+    SPEED-=e.deltaY / 10
+    if(SPEED>100)SPEED=100
+    if(SPEED<0)SPEED=0
 }
 
 

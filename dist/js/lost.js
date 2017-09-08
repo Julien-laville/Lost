@@ -42,16 +42,29 @@ function step(delta) {
     if(isDead) {
         fade++;
     }
-    
-    accInput = acc.setVector(m).sub(screenCenter)
-    
-    if(accInput.norm() < 100) {
-        speed.scale(0.9)
-        if(speed.norm() < 1) {
-            speed.setPoint(0,0)
+    if(MOUSECTRL) {
+        accInput = acc.setVector(m).sub(screenCenter)
+
+        if(accInput.norm() < 100) {
+            speed.scale(0.9)
+            if(speed.norm() < 1) {
+                speed.setPoint(0,0)
+            }
+        } else {
+            acc.setVector(accInput).normalize()
+            speed.add(acc.normalize()   .scale(0.3))
         }
     } else {
-        acc.setVector(accInput).normalize()
+        x=y=0
+        if(up) 
+            y=-1
+        if(down) 
+            y=1
+        if(left) 
+            x=-1
+        if(right) 
+            x=1
+        acc.setPoint(x,y)
         speed.add(acc.scale(0.3))
     }
     c.x = sub.x
@@ -62,7 +75,7 @@ function step(delta) {
     }
     liveProjectile()
     weaponCicle()
-    speed.maxLength(SPEED==0?2:7)
+    speed.maxLength(SPEED/20)
     
     testTrigger()
     
@@ -221,7 +234,6 @@ bstr=''
 function drawUI() {
     ctx.beginPath()
     ctx.strokeStyle = "#fff"
-    ctx.arc(sub.x-c.x+screen.width/2+SUB_LENGTH/2,sub.y-c.y+screen.height/2+SUB_HEIHGT/2, 72, 0, Math.PI*2)
     ctx.closePath()
     ctx.stroke()
     if(isShutdown) {
@@ -265,7 +277,7 @@ function drawUI() {
     // Fill with gradient
     ctx.fillStyle = grd;
     ctx.fillRect(0, 0, screen.width, screen.height)
-    ui.innerHTML = `+speed : ${SPEED==0?'Slow':'Fast'}<br>${harpoon ? 'Harpoon armed' : 'Module available'}<br><div class="contextBar ${cClass}">${cData}</div>`
+    ui.innerHTML = `+speed : ${SPEED}<br>${harpoon ? 'Harpoon armed' : 'Module available'}<br><div class="contextBar ${cClass}">${cData}</div>`
 }
 
 
