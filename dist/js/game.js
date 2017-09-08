@@ -7,6 +7,7 @@ GAME_STATE_RUN = 1
 GAME_STATE_LEVEL = 2
 DEBUG = false
 COLLIDE = true
+MOUSECTRL = true
 
 ctx = screen.getContext("2d")
 var m = new v2d(1,1)
@@ -38,7 +39,7 @@ function loop() {
 }
 
 gameState = GAME_STATE_LEVEL
-
+a = z = e = q = s = d = 0
 window.onkeypress =function(e) {
     touche = e.keyCode || e.charCode
 	if(touche === 32) {
