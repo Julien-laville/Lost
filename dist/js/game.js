@@ -62,11 +62,12 @@ window.onkeyup = function(e) {
 }
 
 
-window.onkeypress =function(e) {
+window.onkeypress = function(e) {
     touche = e.keyCode || e.charCode
 	if(touche === 32) {
 		if(gameState===GAME_STATE_RUN) {
 			//pause
+            screen.className = ''
 			cancelAnimationFrame(frameHandler)
 			gameState = GAME_STATE_PAUSE
 			pauseScreen.style.display = 'block'
@@ -74,12 +75,15 @@ window.onkeypress =function(e) {
             menu.style.display = 'none'
             screen.width += 0
 		} else {
+            screen.className = 'noMouse'
 			//run
 			loop()
 			gameState = GAME_STATE_RUN
 			pauseScreen.style.display = 'none'
 		}
     } else if(canStart && touche===102){
+        screen.className = 'noMouse'
+        gameState = GAME_STATE_RUN
         splash.className = ''
         setTimeout(loop, 500)
     }
@@ -99,7 +103,6 @@ window.onmousemove = function(e) {
 
 
 // menu 
-
 function home() {
     homeD.style.display = 'block'
     menu.style.display = 'block'

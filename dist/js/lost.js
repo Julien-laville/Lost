@@ -1,6 +1,6 @@
 var sub = new v2d(0,0) 
 var speed = new v2d(3,2)
-var SPEED = 0
+var SPEED = 20
 var accInput = new v2d(0,0)
 
 var c = new v2d(100,100)
@@ -80,7 +80,7 @@ function step(delta) {
     testTrigger()
     
     //bubbles
-    liveBubble(acc.x > 0)
+    liveBubble(speed.x > 0)
     
     render()
     
@@ -101,7 +101,7 @@ window.onmouseup = function() {
 }
 
 function weaponCicle() {
-    if(arming) {
+    if(arming && harpoon) {
         chaarge+=delta
     }
 }
@@ -206,7 +206,7 @@ function drawWeapon() {
     }
 
     
-    if(arming) {
+    if(arming && harpoon) {
         arpoonO.setVector(sub).add(arpoonDelta)
         ctx.beginPath()
         ctx.moveTo(arpoonO.x-c.x+screen.width/2, arpoonO.y-c.y+screen.height/2)
@@ -304,9 +304,9 @@ function drawPlayer() {
         ctx.stroke()
     }
     if(harpoon) {
-        drawSprite(sub,6, acc.x > 0)
+        drawSprite(sub,6, speed.x > 0)
     } else {
-        drawSprite(sub, 0, acc.x > 0)
+        drawSprite(sub, 0, speed.x > 0)
     }
 }
 
@@ -405,8 +405,12 @@ function collide() {
         var corner = corners[Object.keys(corners)[i]]
         
         moveOk.setPoint(0,0)
-        for(j=0;j<speed.norm();j++) {
+        for(j=0;j<speed.norm()+1;j++) {
             closePos.setVector(speed).normalize().scale(j)
+            if(j >speed.norm()) {
+                closePos.setVector(speed)
+                
+            }
             futureDelta = closePos.clone()
             closePos.add(corner)
             var tile = level.tiles[Math.floor((closePos.x)/64) + Math.floor((closePos.y)/64)*LEVEL_WIDTH]
@@ -473,35 +477,34 @@ function testTrigger() {
     
          for(i = 0; i < level.triggers.length; i ++) {
             trigger = level.triggers[i]
-            if(sub.x > trigger.x*2 && sub.x < trigger.x*2 + trigger.width*2 && sub.y > trigger.y*2 && sub.y < trigger.y*2 + trigger.height*2) {
-                if(trigger.type === 'shutdown') {
+            if(sub.x > trigger.x*2 && sub.x < trigger.x*2 + trigger.w*2 && sub.y > trigger.y*2 && sub.y < trigger.y*2 + trigger.h*2) {
+                if(trigger.t === 'shutdown') {
                     isShutdown = true
                 } 
-                if(trigger.type === 'start') {
+                if(trigger.t === 'start') {
                     isShutdown = false
                 }
-                if(trigger.type === 'dialog') {
-                    dialogd.innerHTML = trigger.properties.ct
+                if(trigger.t === 'dialog') {
+                    dialogd.innerHTML = trigger.p.ct
                 }
-                if(trigger.type === 'powup') {
-                    if(trigger.properties.i === 1) {
+                if(trigger.t === 'powup') {
+                    if(trigger.p.i === 1) {
                         harpoon = 1
-                        trigger.properties.a=0
+                        trigger.p.a=0
                         dialogd.innerHTML = 'Harpoon aquiererd'
                         ccd('click to fire, keep button down to charge')
                     } 
                 }
-                if(trigger.type === 'end') {
-                   initLevel(trigger.properties.next)
+                if(trigger.t === 'end') {
+                   initLevel(trigger.p.next)
                 }
-                if(trigger.type === 'stream') {
-                    if(trigger.properties.dir === 1) {
-                        accMod.setPoint(4,0)
-                    } else if(trigger.properties.dir === 4) {
-                        accMod.setPoint(-4,0)
+                if(trigger.t === 'stream') {
+                    if(trigger.p.dir === 1) {
+                        accMod.setPoint(3,0)
+                    } else if(trigger.p.dir === 4) {
+                        accMod.setPoint(-3,0)
                     } 
                 }
-
         }
     }
 }
@@ -519,15 +522,21 @@ function initLevel(levelNumber, isNext) {
     levelsD.style.display = 'none'
     cancelAnimationFrame(frameHandler)
     ctx.filter = "blur(50px)";
-    level = TileMaps[levelNumber]
-    level.triggers = level.layers[2].objects
-    level.tiles = level.layers[0].data
-    LEVEL_WIDTH = level.width
-    LEVEL_HEIGHT= level.height
-    gameState = GAME_STATE_RUN
+    level = window[levelNumber]
+    level.triggers = level.tr
+    level.tiles = []
+    for(i=0;i<level.w*level.h;i++){level.tiles[i] = 0}
+    for(i = 0; i < level.ti.length/3; i ++){
+        var x = level.ti.charCodeAt(i*3)-97
+        var y = level.ti.charCodeAt(i*3+1)-97
+        var id = level.ti.charCodeAt(i*3+2)-97
+        level.tiles[x+y*level.w] = id
+    }
+    LEVEL_WIDTH = level.w
+    LEVEL_HEIGHT= level.h
     
     splash.className='splayed'
-    splash.innerHTML=level.properties.splash+'<span>press F to start</span>'
+    splash.innerHTML=level.p.splash+'<span>press F to start</span>'
     bubbles = []
     for(i = 0; i < 10; i ++) {
         bubbles.push({pos : new v2d(0,0), size : 10*i % 70})
@@ -535,29 +544,30 @@ function initLevel(levelNumber, isNext) {
     
     for(j = 0; j < level.triggers.length; j ++) {
         var obj = level.triggers[j]
-        if(obj.type === 'stream') {
+        if(obj.t === 'stream') {
             for(k = 0; k < 30;k ++) {
-                var p = new v2d(2*obj.x+2*Math.random()*obj.width,2*obj.y+2*Math.random()*obj.height)
-                bubbles.push({pos : p, save : p.clone(), size : 10*k % 70, dir : obj.properties.dir})
+                var p = new v2d(2*obj.x+2*Math.random()*obj.w,2*obj.y+2*Math.random()*obj.h)
+                bubbles.push({pos : p, save : p.clone(), size : 10*k % 70, dir : obj.p.dir})
             }
         }
-        if(obj.type === 'start') {
+        if(obj.t === 'start') {
             sub.setPoint(obj.x*2, obj.y*2)
         }
-        if(obj.type === 'boss') {
+        if(obj.t === 'boss') {
             boss.active=true
             boss.p = new v2d(obj.x*2, obj.y*2)
         }
-        if(obj.type === 'artefact') {
+        if(obj.t === 'artefact') {
             artefact.active=true
             artefact.p = new v2d(obj.x*2, obj.y*2)
+            artefact.fx = artefact.p.clone().addP(18,-30) 
         }
     }
     timer={active:false}
-    if(level.properties.time) {
+    if(level.p.time) {
         timer = {
-            initial:level.properties.time*1000,
-            remaining:level.properties.time*1000,
+            initial:level.p.time*1000,
+            remaining:level.p.time*1000,
             active:true
         }
     }
@@ -569,7 +579,7 @@ function drawPowUp() {
     if(artefact.active) {
         drawSprite(artefact.p,7)
         
-        grd = ctx.createRadialGradient(artefact.p.x-c.x+screen.width/2,artefact.p.y-c.y+screen.height/2,0,artefact.p.x-c.x+screen.width/2,artefact.p.y-c.y+screen.height/2,50);
+        grd = ctx.createRadialGradient(artefact.fx.x-c.x+screen.width/2,artefact.fx.y-c.y+screen.height/2,0,artefact.fx.x-c.x+screen.width/2,artefact.fx.y-c.y+screen.height/2,50);
 
         // Add colors
         grd.addColorStop(0, 'rgba(137, 255, 243, 1)');
@@ -579,14 +589,14 @@ function drawPowUp() {
 
         // Fill with gradient
         ctx.beginPath()
-        ctx.arc(artefact.p.x-c.x+screen.width/2,artefact.p.y-c.y+screen.height/2,50,0,2*Math.PI)
+        ctx.arc(artefact.fx.x-c.x+screen.width/2,artefact.fx.y-c.y+screen.height/2,50,0,2*Math.PI)
         ctx.fillStyle = grd;
         ctx.fill()
     }
     for(i = 0; i <  level.triggers.length; i ++) {
         powup =  level.triggers[i]
-        if(powup.type === 'powup') {
-            if(powup.properties.i == 1 && powup.properties.a) {   
+        if(powup.t === 'powup') {
+            if(powup.p.i == 1 && powup.p.a) {   
                 drawSprite(new v2d().setVector(powup).scale(2), 0) 
             }
         }

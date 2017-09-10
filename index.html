@@ -5,7 +5,7 @@
     H2 {
         color: #fff;font-weight: normal;font-size: 16px;
     }
-    CANVAS {
+    CANVAS.noMouse {
         cursor: none
     }
     * {
@@ -15,7 +15,6 @@
     #screen {
         position: absolute;
     }
-    
 
     button {
         display: block;
@@ -81,6 +80,9 @@
         position: absolute;
         color:aliceblue;
     }
+    #dialogd:empty {
+        display: none;
+    }
     #dialogd {
         padding: 10px;
         font-size: 18px;
@@ -142,6 +144,8 @@
 <script src="dist/level/level1.js"></script>
 <script src="dist/level/level2.js"></script>
 <script src="dist/level/level3.js"></script>
+<script src="dist/level/level4.js"></script>
+
 <script src="dist/js/v2d-min.js"></script>
 <script src="dist/js/lost.js"></script>
 <script src="dist/js/game.js"></script>
