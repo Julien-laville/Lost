@@ -270,9 +270,9 @@ function drawUI() {
     grd = ctx.createRadialGradient(screen.width/2, screen.height/2, 0.000, screen.width/2, screen.height/2, screen.width/2);
 
     // Add colors
-    grd.addColorStop(0, 'rgba(0, 0, 0, 0.000)');
-    grd.addColorStop(0.718, 'rgba(0, 0, 0, 0.000)');
-    grd.addColorStop(1.000, 'rgba(0, 0, 0, 1.000)');
+    grd.addColorStop(0, `rgba(${level.r}, ${level.g}, ${level.b}, 0.000)`);
+    grd.addColorStop(0.718, `rgba(${level.r}, ${level.g}, ${level.b}, 0.000)`);
+    grd.addColorStop(1.000, `rgba(${level.r}, ${level.g}, ${level.b}, 1.000)`);
 
     // Fill with gradient
     ctx.fillStyle = grd;
@@ -334,7 +334,7 @@ function liveBubble(rev) {
             b.size = 70
         } else {
             if(b.save) 
-                b.pos.add(new v2d(b.dir==2?2:-2,0))
+                b.pos.add(b.dir)
             else 
                 bubbles[i].pos.add(new v2d(Math.cos(time+b.pos.y), -1.5))
             b.size-- 
@@ -469,7 +469,7 @@ function testTrigger() {
         if(boss.d) {
             if(boss.d.stance(sub) < 50) {
                 splash.className='splayed'
-                splash.innerHTML='<h2>- The end -</h2>You get the warden key, it show you a way home, maybe another aventure'
+                splash.innerHTML='<h2>- The end -</h2>You get the warden key, it shows you a way home, maybe another aventure'
                 cancelAnimationFrame(frameHandler)
                 ctx.filter = "blur(50px)";
             }
@@ -481,7 +481,7 @@ function testTrigger() {
                 if(trigger.t === 'shutdown') {
                     isShutdown = true
                 } 
-                if(trigger.t === 'start') {
+                if(trigger.t === 'boot') {
                     isShutdown = false
                 }
                 if(trigger.t === 'dialog') {
@@ -499,11 +499,7 @@ function testTrigger() {
                    initLevel(trigger.p.next)
                 }
                 if(trigger.t === 'stream') {
-                    if(trigger.p.dir === 1) {
-                        accMod.setPoint(3,0)
-                    } else if(trigger.p.dir === 4) {
-                        accMod.setPoint(-3,0)
-                    } 
+                    accMod.setPoint(trigger.p.x,trigger.p.y)
                 }
         }
     }
@@ -524,12 +520,17 @@ function initLevel(levelNumber, isNext) {
     ctx.filter = "blur(50px)";
     level = window[levelNumber]
     level.triggers = level.tr
+    if(!level.r) {
+        level.r = "11"
+        level.g = "13"
+        level.b = "15"
+    }
     level.tiles = []
     for(i=0;i<level.w*level.h;i++){level.tiles[i] = 0}
     for(i = 0; i < level.ti.length/3; i ++){
-        var x = level.ti.charCodeAt(i*3)-97
-        var y = level.ti.charCodeAt(i*3+1)-97
-        var id = level.ti.charCodeAt(i*3+2)-97
+        var x = level.ti.charCodeAt(i*3)-20
+        var y = level.ti.charCodeAt(i*3+1)-20
+        var id = level.ti.charCodeAt(i*3+2)-20
         level.tiles[x+y*level.w] = id
     }
     LEVEL_WIDTH = level.w
@@ -547,7 +548,7 @@ function initLevel(levelNumber, isNext) {
         if(obj.t === 'stream') {
             for(k = 0; k < 30;k ++) {
                 var p = new v2d(2*obj.x+2*Math.random()*obj.w,2*obj.y+2*Math.random()*obj.h)
-                bubbles.push({pos : p, save : p.clone(), size : 10*k % 70, dir : obj.p.dir})
+                bubbles.push({pos : p, save : p.clone(), size : 10*k % 70, dir : new v2d(obj.p.x,obj.p.y)})
             }
         }
         if(obj.t === 'start') {

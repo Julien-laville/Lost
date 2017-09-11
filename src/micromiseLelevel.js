@@ -28,7 +28,7 @@ for(let i = 0; i < level.height; i++) {
         let tile = tiles[i*level.width+j]
         
         if(tile !== 0) {
-            tilechain += String.fromCharCode(j+97) + String.fromCharCode(i+97) + String.fromCharCode(tile+97)
+            tilechain += String.fromCharCode(j+20) + String.fromCharCode(i+20) + String.fromCharCode(tile+20)
         }
     }
 }

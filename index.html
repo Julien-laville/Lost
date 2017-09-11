@@ -115,16 +115,18 @@
 <div id="homeD">
     <div id="homeImg"></div> 
     <div id="menu">
-        <button onclick="initLevel('level1')">Begin story</button>
+        <button onclick="initLevel('level0')">Begin story</button>
         <button onclick="levels()">Levels</button>
     </div>
     
     <div id="levelsD" style="display: none">
         <h2> - Levels - </h2>
-        <button onclick="initLevel('level1')">02 - Level 1(collide)</button>
-        <button onclick="initLevel('level2')">03 - Level 2</button>
-        <button onclick="initLevel('level3')">03 - Level 3(dialog)</button>
-
+        <button onclick="initLevel('level0')">00 - Prolog</button>
+        <button onclick="initLevel('level1')">01 - the deep</button>
+        <button onclick="initLevel('level2')">02 - Hurry</button>
+        <button onclick="initLevel('level3')">03 - Lost</button>
+        <button onclick="initLevel('level4')">04 - Escape</button>
+        <button onclick="initLevel('level5')">05 - Monster</button>
         <br>
 
         <button onclick="home()">Back</button>
@@ -141,6 +143,7 @@
 
 
 
+<script src="dist/level/level0.js"></script>
 <script src="dist/level/level1.js"></script>
 <script src="dist/level/level2.js"></script>
 <script src="dist/level/level3.js"></script>
