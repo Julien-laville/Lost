@@ -1,6 +1,3 @@
-# level tile
+# 13K under the sea
 
-- 0 collide
-- 1 not displayed
-- 2 scenario objects
-
+I Game for js13k
