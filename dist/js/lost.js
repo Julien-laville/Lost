@@ -277,7 +277,7 @@ function drawUI() {
     // Fill with gradient
     ctx.fillStyle = grd;
     ctx.fillRect(0, 0, screen.width, screen.height)
-    ui.innerHTML = `+speed : ${SPEED}<br>${harpoon ? 'Harpoon armed' : 'Module available'}<br><div class="contextBar ${cClass}">${cData}</div>`
+    ui.innerHTML = `Power : ${SPEED}<br>Pressure : ${sub.y.toFixed(1)}<br>${harpoon ? 'Module : harpoon' : 'Module : available'}<br><div class="contextBar ${cClass}">${cData}</div>`
 }
 
 
@@ -499,7 +499,7 @@ function testTrigger() {
                    initLevel(trigger.p.next)
                 }
                 if(trigger.t === 'stream') {
-                    accMod.setPoint(trigger.p.x,trigger.p.y)
+                    accMod.setPoint(trigger.p.x*2,trigger.p.y*2)
                 }
         }
     }
