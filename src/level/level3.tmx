@@ -3,7 +3,7 @@
  <properties>
   <property name="splash" value="Wow this is a labyrinth"/>
  </properties>
- <tileset firstgid="1" source="sans-titre.tsx"/>
+ <tileset firstgid="1" source="sprite.tsx"/>
  <layer name="Calque de Tile 1" width="96" height="96">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

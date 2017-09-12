@@ -4,7 +4,7 @@
   <property name="splash" value="Hurry Up !"/>
   <property name="time" type="int" value="60"/>
  </properties>
- <tileset firstgid="1" source="sans-titre.tsx"/>
+ <tileset firstgid="1" source="sprite.tsx"/>
  <layer name="Calque de Tile 1" width="64" height="64">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

@@ -6,7 +6,7 @@
   <property name="r" type="int" value="13"/>
   <property name="splash" value="The mission"/>
  </properties>
- <tileset firstgid="1" source="sans-titre.tsx"/>
+ <tileset firstgid="1" source="sprite.tsx"/>
  <layer name="Calque 2" width="64" height="64">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
