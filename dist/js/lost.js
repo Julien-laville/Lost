@@ -250,12 +250,12 @@ function drawUI() {
     }
     cData=''
     cClass=''
-    if(boss.active){
+    if(boss.active&level.p.k){
         cData += 'Boss HP : '
         for(i=0;i<10;i++) {
             cData+= boss.hp>i?' ▮': ' ▯'
         }
-        cCLass="boss"
+        cClass="boss"
     } else if(timer.active) {
         cData = 'Time remaining : ' 
         timer.remaining-=delta
@@ -277,7 +277,8 @@ function drawUI() {
     // Fill with gradient
     ctx.fillStyle = grd;
     ctx.fillRect(0, 0, screen.width, screen.height)
-    ui.innerHTML = `Power : ${SPEED}<br>Pressure : ${sub.y.toFixed(1)}<br>${harpoon ? 'Module : harpoon' : 'Module : available'}<br><div class="contextBar ${cClass}">${cData}</div>`
+    ui.innerHTML = `Power : ${SPEED}<br>Pressure : ${sub.y.toFixed(1)}<br>${harpoon ? 'Module : harpoon' : 'Module : available'}<br>`
+    ccb.innerHTML = `<div class="contextBar ${cClass}">${cData}</div>`
 }
 
 
@@ -353,13 +354,13 @@ function gamo() {
 }
 sprt = [
     0,0,64,32,//sub
-    64,128,32,32,//harp
+    192,64,32,32,//harp
     128,0,3,3,//dot
     131,0,7,7,//cross
     139,0,6,9,//cur
     160,5,82,53,//boss
     0,0,64,40,//sub-cannon
-    192,64,18,30//artefact
+    224,64,18,30//artefact
     
 ]
 
@@ -578,7 +579,6 @@ function initLevel(levelNumber, isNext) {
 
 function drawPowUp() {
     if(artefact.active) {
-        drawSprite(artefact.p,7)
         
         grd = ctx.createRadialGradient(artefact.fx.x-c.x+screen.width/2,artefact.fx.y-c.y+screen.height/2,0,artefact.fx.x-c.x+screen.width/2,artefact.fx.y-c.y+screen.height/2,50);
 
@@ -598,21 +598,26 @@ function drawPowUp() {
         powup =  level.triggers[i]
         if(powup.t === 'powup') {
             if(powup.p.i == 1 && powup.p.a) {   
-                drawSprite(new v2d().setVector(powup).scale(2), 0) 
+                drawSprite(new v2d().setVector(powup).scale(2), 1) 
             }
         }
     }
 } 
 
 tilesT = []
-tilesT[20] = [96, 32]
-tilesT[81] = [0, 160]
+tilesT[35] = [64, 64]
+tilesT[36] = [96, 64]
+tilesT[37] = [128, 64]
+tilesT[33] = [0, 64]
+tilesT[34] = [32, 64]
 function drawLevel() { 
     drawPowUp()
     for(i = 0; i < LEVEL_HEIGHT || i < SCREEN_HEIGHT; i++) {
         for(j = 0;j < LEVEL_WIDTH || j < SCREEN_WIDTH; j ++) {
         tile = level.tiles[i*LEVEL_WIDTH+j]
-
+            if(tile!=0){
+                var aaaa = tile
+            }    
             if(tilesT[tile]) {
                 ctx.drawImage(sprite, tilesT[tile][0], tilesT[tile][1], 32, 32, 64*j-c.x+screen.width/2, 64*i-c.y+screen.height/2, 64, 64)
             }
