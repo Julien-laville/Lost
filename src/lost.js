@@ -160,7 +160,7 @@ function liveProjectile() {
 function liveHostile() {
     if(boss.active) {
         if(boss.hp>0)
-            boss.p.add(sub.clone().addP(64,32).sub(boss.p.clone().addP(80,50)).normalize().scale(0.5))
+            boss.p.add(sub.clone().addP(64,32).sub(boss.p.clone().addP(80,50)).normalize().scale(0.8))
         else
             boss.p.add(new v2d(0,1))
         
