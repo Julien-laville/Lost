@@ -2,10 +2,13 @@
 # 13K under the sea
 ![sub](./subhead.png)
 
+## The game
 I Game for js13k
 
 WASD to move 
-mouse wheel to modify speed
+mouse wheel to modify power
+
+A little sub adventure in the deep of seas
 
 ## Map with tiled
 
@@ -56,7 +59,7 @@ A tiny script for tiled map export compression was made : [micromiseLevel.js](ht
  
  Par défaut tiled exporte chaque layer sous forme d'une tableau unidimmensionnel l'id du type de cellule.
  
- Sans aucune approche scinetifique, il a été decidé de stoquer seulement la position des ids utilisés (x,y,z) en convertisant chaque valeur en equivalent ascii (limite a 127 valeurs possible).
+ Sans aucune approche scientifique, il a été decidé de stocker seulement la position des ids utilisés (x,y,z) en convertisant chaque valeur en equivalent ascii (limite a 127 valeurs possible).
  
  ##### Tile fragment export
  ```
@@ -67,4 +70,13 @@ A tiny script for tiled map export compression was made : [micromiseLevel.js](ht
  Une tuile est donc truelle de 3 caracteres ascii.
  les autres information (propriétés de la map et entitities) sont copiés tel quel
     
-  
+  ## Todo
+   - <input type="checkbox"> Tileset (.TSX) loader
+   - <input type="checkbox"> Collision
+   - <input type="checkbox"> Moar hostiles
+   - <input type="checkbox"> Empty tiles
+   - <input type="checkbox"> in & out
+   - <input type="checkbox"> foreground
+   - <input type="checkbox"> mine
+   - <input type="checkbox"> shockwave
+   - <input type="checkbox"> music, sfx

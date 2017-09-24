@@ -1,5 +1,6 @@
 const levelName = process.argv[2]
 console.log('Level ready '+levelName)
+const xmlParser = require('xml2js').Parser()
 
 const level = require('./level/'+levelName)
 const fs = require('fs')
@@ -18,6 +19,13 @@ newLevel.tr = triggers.map((trigger) => {
         p : trigger.properties,
         t : trigger.type
     }
+})
+
+
+//export tileset
+
+const tsx = xmlParser.parseString(fs.readFileSync('./level/sprite.tsx'), function(err, result) {
+    console.log(result.tileset.tile[0].objectgroup[0].properties[0].property)
 })
 
 //remap map tiles
